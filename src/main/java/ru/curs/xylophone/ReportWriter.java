@@ -329,6 +329,5 @@ abstract class ReportWriter {
      */
     public abstract void flush() throws XylophoneError;
 
-    abstract void applyMergedRegions(Stream<CellRangeAddress> mergedRegions);
 
 }

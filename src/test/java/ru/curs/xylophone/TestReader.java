@@ -84,7 +84,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, null);
+				descrStream, false,null);
 		DescriptorElement d = reader.getDescriptor();
 
 		assertEquals(2, d.getSubElements().size());

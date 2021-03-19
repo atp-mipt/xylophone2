@@ -52,13 +52,13 @@ public final class XML2Spreadsheet {
      * Запускает построение отчётов на исходных данных. Перегруженная версия
      * метода, работающая на потоках.
      *
-     * @param xmlData       Исходные данные.
+     * @param xmlData          Исходные данные.
      * @param descriptorStream Дескриптор, описывающий порядок итерации по исходным данным.
-     * @param template      Шаблон отчёта.
-     * @param outputType    Тип шаблона отчёта (OpenOffice, XLS, XLSX).
-     * @param useSAX        Режим процессинга (DOM или SAX).
-     * @param copyTemplate  Копировать ли шаблон полностью перед началом обработки.
-     * @param output        Поток, в который записывается результирующий отчёт.
+     * @param template         Шаблон отчёта.
+     * @param outputType       Тип шаблона отчёта (OpenOffice, XLS, XLSX).
+     * @param useSAX           Режим процессинга (DOM или SAX).
+     * @param copyTemplate     Копировать ли шаблон полностью перед началом обработки.
+     * @param output           Поток, в который записывается результирующий отчёт.
      * @throws XylophoneError в случае возникновения ошибок
      */
     public static void process(
@@ -146,12 +146,12 @@ public final class XML2Spreadsheet {
      * метода, работающая на файлах (для удобства использования из
      * Python-скриптов).
      *
-     * @param xmlData       Исходные данные.
+     * @param xmlData      Исходные данные.
      * @param descriptor   Дескриптор, описывающий порядок итерации по исходным данным.
-     * @param template      Шаблон отчёта. Тип шаблона отчёта определяется по расширению.
-     * @param useSAX        Режим процессинга (false, если DOM, или true, если SAX).
-     * @param copyTemplate  Копировать ли шаблон.
-     * @param output        Поток, в который записывается результирующий отчёт.
+     * @param template     Шаблон отчёта. Тип шаблона отчёта определяется по расширению.
+     * @param useSAX       Режим процессинга (false, если DOM, или true, если SAX).
+     * @param copyTemplate Копировать ли шаблон.
+     * @param output       Поток, в который записывается результирующий отчёт.
      * @throws FileNotFoundException в случае, если указанные файлы не существуют
      * @throws XylophoneError  в случае иных ошибок
      */

@@ -90,49 +90,49 @@ public class Main {
 
         for (String s : args)
             switch (state) {
-            case READTOKEN:
-                if (DATA.equalsIgnoreCase(s))
-                    state = State.READDATA;
-                else if (TEMPLATE.equalsIgnoreCase(s))
-                    state = State.READTEMPLATE;
-                else if (DESCR.equalsIgnoreCase(s))
-                    state = State.READDESCR;
-                else if (OUT.equalsIgnoreCase(s))
-                    state = State.READOUT;
-                else if (SAX.equalsIgnoreCase(s))
-                    useSAX = true;
-                else if (COPYTEMPLATE.equalsIgnoreCase(s))
-                    copyTemplate = true;
+                case READTOKEN:
+                    if (DATA.equalsIgnoreCase(s))
+                        state = State.READDATA;
+                    else if (TEMPLATE.equalsIgnoreCase(s))
+                        state = State.READTEMPLATE;
+                    else if (DESCR.equalsIgnoreCase(s))
+                        state = State.READDESCR;
+                    else if (OUT.equalsIgnoreCase(s))
+                        state = State.READOUT;
+                    else if (SAX.equalsIgnoreCase(s))
+                        useSAX = true;
+                    else if (COPYTEMPLATE.equalsIgnoreCase(s))
+                        copyTemplate = true;
                     else if (CONVERT_DESCRIPTOR.equalsIgnoreCase(s))
                         state = State.WRITEJSONDESCR;
                     else {
-                    showHelp();
+                        showHelp();
                         return;
                     }
-                break;
-            case READDATA:
+                    break;
+                case READDATA:
                     iff = new FileInputStream(s);
-                state = State.READTOKEN;
-                break;
-            case READTEMPLATE:
-                template = new File(s);
-                state = State.READTOKEN;
-                break;
-            case READDESCR:
+                    state = State.READTOKEN;
+                    break;
+                case READTEMPLATE:
+                    template = new File(s);
+                    state = State.READTOKEN;
+                    break;
+                case READDESCR:
                     descr = new FileInputStream(s);
-                state = State.READTOKEN;
-                break;
-            case READOUT:
+                    state = State.READTOKEN;
+                    break;
+                case READOUT:
                     output = new FileOutputStream(s);
                     state = State.READTOKEN;
                     break;
                 case WRITEJSONDESCR:
                     xmlDescr = new FileOutputStream(s);
                     convDescriptor = true;
-                state = State.READTOKEN;
-                break;
-            default:
-                break;
+                    state = State.READTOKEN;
+                    break;
+                default:
+                    break;
             }
 
         if (convDescriptor && descr != null && xmlDescr != null) {

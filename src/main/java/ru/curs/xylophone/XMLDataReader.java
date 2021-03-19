@@ -283,7 +283,7 @@ abstract class XMLDataReader {
      *
      * @throws XML2SpreadSheetError
      *             В случае возникновения ошибок ввода-вывода или при
-     *             интерпретации данных, шаблона или дескриптора.
+     *                              интерпретации данных, шаблона или дескриптора.
      */
     abstract void process() throws XylophoneError;
 
@@ -296,7 +296,7 @@ abstract class XMLDataReader {
      *            Дескриптор секции.
      * @throws XML2SpreadSheetError
      *             В случае возникновения ошибок ввода-вывода или при
-     *             интерпретации шаблона.
+     *                              интерпретации шаблона.
      */
     final void processOutput(XMLContext c, DescriptorOutput o)
             throws XylophoneError {
@@ -316,7 +316,7 @@ abstract class XMLDataReader {
     }
 
     static boolean compareNames(String expected, String actual,
-            Map<String, String> attributes) {
+                                Map<String, String> attributes) {
         if (expected == null)
             return actual == null;
 

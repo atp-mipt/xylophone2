@@ -38,7 +38,14 @@ package ru.curs.xylophone;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.InputStream;
-import java.util.stream.Stream;
+
+//import com.github.miachm.sods.Sheet;
+import com.github.miachm.sods.SpreadSheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Реализация ReportWriter для вывода в формат OpenOffice (ODS).
@@ -67,7 +74,11 @@ final class ODSReportWriter extends ReportWriter {
     @Override
     public void flush() {
         // TODO Auto-generated method stub
-
+        try {
+            spread.save(getOutput());
+        } catch (IOException e) {
+            throw new XML2SpreadSheetError(e.getMessage());
+        }
     }
 
     @Override
@@ -96,9 +107,15 @@ final class ODSReportWriter extends ReportWriter {
     }
 
     @Override
-    void applyMergedRegions(Stream<CellRangeAddress> mergedRegions){
-        // TODO Auto-generated method stub
+    public Sheet getSheet() {
+        throw new UnsupportedOperationException();
+//        Sheet activeResultSheet;
+//        Workbook result = createResultWb(templateCopy);
+//        activeResultSheet = result.getSheet(sheetName);
 
+
+        // cast from ODS sheet to POI sheet ???
+//        return activeResultSheet;
     }
 
 }
