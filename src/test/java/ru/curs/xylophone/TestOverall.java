@@ -1,6 +1,5 @@
 package ru.curs.xylophone;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.approvaltests.Approvals;
 import org.approvaltests.writers.ApprovalBinaryFileWriter;
 import org.junit.Rule;
@@ -12,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Paths;
+
 
 public class TestOverall {
     @Rule
@@ -72,19 +72,6 @@ public class TestOverall {
 		// verifying the XLS file
 		Approvals.verify(new ApprovalBinaryFileWriter(
 				new ByteArrayInputStream(writtenXLSData), "xls"
-		));
-
-        HSSFWorkbook workbook = new HSSFWorkbook(new ByteArrayInputStream(writtenXLSData));
-        Excel2Print excelPrinter = new Excel2Print(workbook);
-        excelPrinter.setFopConfig(Paths.get(TestFO.class.getResource("fop.xconf").toURI()).toFile());
-
-		ByteArrayOutputStream pdf_bos = new ByteArrayOutputStream();
-        excelPrinter.toPDF(pdf_bos);
-		byte[] writtenPDFData = pdf_bos.toByteArray();
-
-		// verifying the PDF file
-		Approvals.verify(new ApprovalBinaryFileWriter(
-				new ByteArrayInputStream(writtenXLSData), "pdf"
 		));
     }
 }
