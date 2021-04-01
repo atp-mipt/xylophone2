@@ -25,7 +25,7 @@ public class MergeRegionContainerUT {
      * Should be success.
      */
     @Test
-    public void testMergeLeftOneShouldBeSuccess() throws XML2SpreadSheetError {
+    public void testMergeLeftOneShouldBeSuccess() {
         MergeRegionContainer container = MergeRegionContainer.getContainer();
 
         container.mergeLeft(new CellAddress(2, 1));

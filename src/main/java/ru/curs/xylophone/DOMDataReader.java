@@ -37,12 +37,10 @@ package ru.curs.xylophone;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,7 +69,7 @@ final class DOMDataReader extends XMLDataReader {
 
     // В режиме итерации нашёлся подходящий элемент
     private void processElement(String elementPath, DescriptorElement de,
-            Element xe, int position) throws XML2SpreadSheetError, Exception {
+            Element xe, int position) throws Exception {
         XMLContext context = null;
         for (DescriptorSubelement se : de.getSubelements()) {
             if (se instanceof DescriptorIteration) {

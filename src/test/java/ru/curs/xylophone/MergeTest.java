@@ -13,7 +13,7 @@ public class MergeTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void mergeUpTest() throws URISyntaxException, IOException, XML2SpreadSheetError, Exception {
+    public void mergeUpTest() throws Exception {
         File descriptor = Paths.get(TestOverall.class.getResource("testdescriptor.xml").toURI()).toFile();
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("test_data_with_spec_symbols.xml");
@@ -28,7 +28,7 @@ public class MergeTest {
     }
 
     @Test
-    public void mergeLeftTest() throws URISyntaxException, IOException, XML2SpreadSheetError, Exception {
+    public void mergeLeftTest() throws Exception {
         File descriptor = Paths.get(TestOverall.class.getResource("testdescriptor.xml").toURI()).toFile();
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("test_data_with_spec_symbols.xml");
@@ -43,7 +43,7 @@ public class MergeTest {
     }
 
     @Test
-    public void mergeTest() throws IOException, URISyntaxException, XML2SpreadSheetError, Exception {
+    public void mergeTest() throws Exception {
         File descriptor = Paths.get(TestOverall.class.getResource("testdescriptor.xml").toURI()).toFile();
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("test_data_with_spec_symbols.xml");
@@ -58,7 +58,7 @@ public class MergeTest {
     }
 
     @Test
-    public void mergeComplexTest() throws IOException, URISyntaxException, XML2SpreadSheetError, Exception {
+    public void mergeComplexTest() throws Exception {
         File descriptor = Paths.get(TestOverall.class.getResource("merge_descriptor.xml").toURI()).toFile();
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("merge_data.xml");
@@ -73,7 +73,7 @@ public class MergeTest {
     }
 
     @Test
-    public void mergeComplexTestWithLeftUp() throws IOException, URISyntaxException, XML2SpreadSheetError, Exception {
+    public void mergeComplexTestWithLeftUp() throws Exception {
         File descriptor = Paths.get(TestOverall.class.getResource("merge_descriptor.xml").toURI()).toFile();
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("merge_data.xml");
@@ -89,7 +89,7 @@ public class MergeTest {
     }
 
     @Test
-    public void mergeComplexTestWithUpLeft() throws IOException, URISyntaxException, XML2SpreadSheetError, Exception {
+    public void mergeComplexTestWithUpLeft() throws Exception {
         File descriptor = Paths.get(TestOverall.class.getResource("merge_descriptor_up_left.xml").toURI()).toFile();
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("merge_data_up_left.xml");

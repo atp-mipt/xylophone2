@@ -50,8 +50,8 @@ import java.util.stream.Stream;
  */
 final class ODSReportWriter extends ReportWriter {
 
-    ODSReportWriter(InputStream template, InputStream templateCopy) throws ODS2SpreadSheetError, IOException {
-            throw new ODS2SpreadSheetError("In work ...");
+    ODSReportWriter(InputStream template, InputStream templateCopy) throws XML2SpreadSheetError {
+            throw new XML2SpreadSheetError("In work ...");
     }
 
     @Override

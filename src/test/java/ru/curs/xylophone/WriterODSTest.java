@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 public class WriterODSTest {
 
     @Test
-    public void WriterODS() throws ODS2SpreadSheetError, IOException {
+    public void WriterODS() throws IOException, XML2SpreadSheetError {
         InputStream templateStream = TestReader.class
                 .getResourceAsStream("template.ods");
 
