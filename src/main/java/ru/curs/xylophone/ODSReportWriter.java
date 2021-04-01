@@ -58,7 +58,7 @@ final class ODSReportWriter extends ReportWriter {
 
     ODSReportWriter(InputStream template, InputStream templateCopy) throws XylophoneError {
             throw new XylophoneError("In work ...");
-        }
+    }
 
     @Override
     void newSheet(String sheetName, String sourceSheet,
