@@ -1,23 +1,16 @@
 package ru.curs.xylophone;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-
-import org.junit.rules.ExpectedException;
-import ru.curs.xylophone.XMLDataReader.DescriptorElement;
-import ru.curs.xylophone.XMLDataReader.DescriptorIteration;
-import ru.curs.xylophone.XMLDataReader.DescriptorOutput;
+import static org.junit.Assert.*;
 
 public class TestReader {
 	private InputStream descrStream;
@@ -78,42 +71,42 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, null);
+				descrStream, false, false,null);
 		DescriptorElement d = reader.getDescriptor();
 
-		assertEquals(2, d.getSubelements().size());
-		assertEquals("report", d.getElementName());
-		DescriptorIteration i = (DescriptorIteration) d.getSubelements().get(0);
+		assertEquals(2, d.getSubElements().size());
+		assertEquals("report", d.getName());
+		DescriptorIteration i = (DescriptorIteration) d.getSubElements().get(0);
 		assertEquals(0, i.getIndex());
 
 		assertFalse(i.isHorizontal());
 		DescriptorElement de = i.getElements().get(0);
-		i = (DescriptorIteration) de.getSubelements().get(1);
+		i = (DescriptorIteration) de.getSubElements().get(1);
 
 		de = i.getElements().get(0);
 
-		assertEquals("line", de.getElementName());
-		assertFalse(((DescriptorOutput) de.getSubelements().get(0))
+		assertEquals("line", de.getName());
+		assertFalse(((DescriptorOutput) de.getSubElements().get(0))
 				.getPageBreak());
 
 		de = i.getElements().get(1);
-		assertEquals("group", de.getElementName());
-		assertTrue(((DescriptorOutput) de.getSubelements().get(0))
+		assertEquals("group", de.getName());
+		assertTrue(((DescriptorOutput) de.getSubElements().get(0))
 				.getPageBreak());
 
-		i = (DescriptorIteration) d.getSubelements().get(1);
+		i = (DescriptorIteration) d.getSubElements().get(1);
 		assertEquals(-1, i.getIndex());
 		assertFalse(i.isHorizontal());
 
 		assertEquals(1, i.getElements().size());
 		d = i.getElements().get(0);
-		assertEquals("sheet", d.getElementName());
-		assertEquals(4, d.getSubelements().size());
-		DescriptorOutput o = (DescriptorOutput) d.getSubelements().get(0);
+		assertEquals("sheet", d.getName());
+		assertEquals(4, d.getSubElements().size());
+		DescriptorOutput o = (DescriptorOutput) d.getSubElements().get(0);
 		assertEquals("~{@name}", o.getWorksheet());
-		o = (DescriptorOutput) d.getSubelements().get(1);
+		o = (DescriptorOutput) d.getSubElements().get(1);
 		assertNull(o.getWorksheet());
-		i = (DescriptorIteration) d.getSubelements().get(2);
+		i = (DescriptorIteration) d.getSubElements().get(2);
 		assertEquals(-1, i.getIndex());
 		assertTrue(i.isHorizontal());
 
@@ -128,7 +121,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false, false, w);
 		reader.process();
 		assertEquals(
 				"Q{TCQ{CCbQ{CC}C}}Q{TCQh{CCC}Q{CQh{CCC}CQh{CCC}CQh{CCC}}TCQh{}Q{}}F",
@@ -144,7 +137,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false,false, w);
 		reader.process();
 		assertEquals("Q{TCQ{CCQ{CC}C}}Q{TCQh{CCC}Q{CQh{CCC}}TCQh{}Q{}}F", w
 				.getLog().toString());
@@ -159,7 +152,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, true, w);
+				descrStream, false, true, w);
 		// Проверяем, что на некорректных данных выскакивает корректное
 		// сообщение об ошибке
 		boolean itHappened = false;
@@ -183,7 +176,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false, false, w);
 		reader.process();
 		assertEquals("Q{TCQ{CCQ{CC}C}TQ{CQh{CCC}CQh{CCC}CQh{CCC}}TQ{}}F", w
 				.getLog().toString());
@@ -198,7 +191,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false, false, w);
 		reader.process();
 		assertEquals("Q{TCQ{CCQ{CC}C}TQ{CQh{CCC}}TQ{}}F", w.getLog().toString());
 	}
@@ -215,7 +208,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
 		XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false, false, w);
 	}
 
 	@Test
@@ -231,7 +224,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
 		XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false, false, w);
 	}
 
 	@Test
@@ -247,7 +240,7 @@ public class TestReader {
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
 		XMLDataReader.createReader(dataStream,
-				descrStream, false, w);
+				descrStream, false, false, w);
 	}
 }
 

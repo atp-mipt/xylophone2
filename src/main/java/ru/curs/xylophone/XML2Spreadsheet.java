@@ -35,14 +35,10 @@
 */
 package ru.curs.xylophone;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import java.io.*;
 
 /**
  * Основной класс построителя отчётов из XML данных в формате электронных
@@ -58,7 +54,7 @@ public final class XML2Spreadsheet {
      * метода, работающая на потоках.
      *
      * @param xmlData       Исходные данные.
-     * @param xmlDescriptor Дескриптор, описывающий порядок итерации по исходным данным.
+     * @param descriptorStream Дескриптор, описывающий порядок итерации по исходным данным.
      * @param template      Шаблон отчёта.
      * @param outputType    Тип шаблона отчёта (OpenOffice, XLS, XLSX).
      * @param useSAX        Режим процессинга (DOM или SAX).
@@ -66,14 +62,25 @@ public final class XML2Spreadsheet {
      * @param output        Поток, в который записывается результирующий отчёт.
      * @throws XML2SpreadSheetError в случае возникновения ошибок
      */
-    public static void process(InputStream xmlData, InputStream xmlDescriptor,
-                               InputStream template, OutputType outputType, boolean useSAX,
-                               boolean copyTemplate, OutputStream output)
-            throws XML2SpreadSheetError {
+    public static void process(
+            InputStream xmlData,
+            InputStream descriptorStream,
+            boolean descriptor_json,
+            InputStream template,
+            OutputType outputType,
+            boolean useSAX,
+            boolean copyTemplate,
+            OutputStream output)
+            throws XML2SpreadSheetError
+    {
         ReportWriter writer = ReportWriter.createWriter(template, outputType,
                 copyTemplate, output);
-        XMLDataReader reader = XMLDataReader.createReader(xmlData,
-                xmlDescriptor, useSAX, writer);
+        XMLDataReader reader = XMLDataReader.createReader(
+                xmlData,
+                descriptorStream,
+                descriptor_json,
+                useSAX,
+                writer);
         reader.process();
     }
 
@@ -108,8 +115,12 @@ public final class XML2Spreadsheet {
                             // Do nothing.
                         }
                     });
-            XMLDataReader reader = XMLDataReader.createReader(xmlData, descr,
-                    useSAX, writer);
+            XMLDataReader reader = XMLDataReader.createReader(
+                    xmlData,
+                    descr,
+                    false,
+                    useSAX,
+                    writer);
             reader.process();
             return ((POIReportWriter) writer).getResult();
         }
@@ -131,7 +142,14 @@ public final class XML2Spreadsheet {
     public static void process(InputStream xmlData, InputStream xmlDescriptor,
                                InputStream template, OutputType outputType, boolean useSAX,
                                OutputStream output) throws XML2SpreadSheetError {
-        process(xmlData, xmlDescriptor, template, outputType, useSAX, false,
+        process(
+                xmlData,
+                xmlDescriptor,
+                false,
+                template,
+                outputType,
+                useSAX,
+                false,
                 output);
     }
 
@@ -141,7 +159,7 @@ public final class XML2Spreadsheet {
      * Python-скриптов).
      *
      * @param xmlData       Исходные данные.
-     * @param xmlDescriptor Дескриптор, описывающий порядок итерации по исходным данным.
+     * @param descriptorFile Дескриптор, описывающий порядок итерации по исходным данным.
      * @param template      Шаблон отчёта. Тип шаблона отчёта определяется по расширению.
      * @param useSAX        Режим процессинга (false, если DOM, или true, если SAX).
      * @param copyTemplate  Копировать ли шаблон.
@@ -149,16 +167,17 @@ public final class XML2Spreadsheet {
      * @throws FileNotFoundException в случае, если указанные файлы не существуют
      * @throws XML2SpreadSheetError  в случае иных ошибок
      */
-    public static void process(InputStream xmlData, File xmlDescriptor,
+    public static void process(InputStream xmlData, File descriptorFile,
                                File template, boolean useSAX, boolean copyTemplate,
                                OutputStream output) throws FileNotFoundException,
             XML2SpreadSheetError {
         OutputType outputType = getOutputType(template);
+        boolean descr_json = "json".equalsIgnoreCase(FilenameUtils.getExtension(descriptorFile.getName()));
         try (
-                InputStream descr = new FileInputStream(xmlDescriptor);
+                InputStream descr = new FileInputStream(descriptorFile);
                 InputStream templ = new FileInputStream(template)
         ) {
-            process(xmlData, descr, templ, outputType, useSAX, copyTemplate,
+            process(xmlData, descr, descr_json, templ, outputType, useSAX, copyTemplate,
                     output);
         } catch (FileNotFoundException e) {
             throw e;

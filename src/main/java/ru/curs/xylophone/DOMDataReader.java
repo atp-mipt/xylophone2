@@ -35,15 +35,14 @@
 */
 package ru.curs.xylophone;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * Класс, ответственный за чтение из XML-файла и перенаправление команд на вывод
@@ -53,8 +52,8 @@ final class DOMDataReader extends XMLDataReader {
 
     private final Document xmlData;
 
-    DOMDataReader(InputStream xmlData, DescriptorElement xmlDescriptor,
-            ReportWriter writer) throws XML2SpreadSheetError {
+    DOMDataReader(InputStream xmlData, ru.curs.xylophone.DescriptorElement xmlDescriptor,
+                  ReportWriter writer) throws XML2SpreadSheetError {
         super(writer, xmlDescriptor);
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance()
@@ -68,20 +67,20 @@ final class DOMDataReader extends XMLDataReader {
     }
 
     // В режиме итерации нашёлся подходящий элемент
-    private void processElement(String elementPath, DescriptorElement de,
+    private void processElement(String elementPath, ru.curs.xylophone.DescriptorElement de,
             Element xe, int position) throws XML2SpreadSheetError {
         XMLContext context = null;
-        for (DescriptorSubelement se : de.getSubelements()) {
-            if (se instanceof DescriptorIteration) {
-                processIteration(elementPath, xe, (DescriptorIteration) se,
+        for (DescriptorOutputBase se : de.getSubElements()) {
+            if (se instanceof ru.curs.xylophone.DescriptorIteration) {
+                processIteration(elementPath, xe, (ru.curs.xylophone.DescriptorIteration) se,
                         position);
-            } else if (se instanceof DescriptorOutput) {
+            } else if (se instanceof ru.curs.xylophone.DescriptorOutput) {
                 // Контекст имеет смысл создавать лишь если есть хоть один
                 // output
                 if (context == null)
                     context = new XMLContext.DOMContext(xe, elementPath,
                             position);
-                processOutput(context, (DescriptorOutput) se);
+                processOutput(context, (ru.curs.xylophone.DescriptorOutput) se);
             }
         }
 
@@ -89,14 +88,14 @@ final class DOMDataReader extends XMLDataReader {
 
     // По субэлементам текущего элемента надо провести итерацию
     private void processIteration(String elementPath, Element parent,
-            DescriptorIteration i, int position) throws XML2SpreadSheetError {
+                                  ru.curs.xylophone.DescriptorIteration i, int position) throws XML2SpreadSheetError {
 
         final HashMap<String, Integer> elementIndices = new HashMap<>();
 
         getWriter().startSequence(i.isHorizontal());
 
-        for (DescriptorElement de : i.getElements())
-            if ("(before)".equals(de.getElementName()))
+        for (ru.curs.xylophone.DescriptorElement de : i.getElements())
+            if ("(before)".equals(de.getName()))
                 processElement(elementPath, de, parent, position);
 
         Node n = parent.getFirstChild();
@@ -122,8 +121,8 @@ final class DOMDataReader extends XMLDataReader {
                         atts.put(att.getNodeName(), att.getNodeValue());
                     }
 
-                    for (DescriptorElement e : i.getElements())
-                        if (compareNames(e.getElementName(), n.getNodeName(),
+                    for (ru.curs.xylophone.DescriptorElement e : i.getElements())
+                        if (compareNames(e.getName(), n.getNodeName(),
                                 atts)) {
                             found = true;
                             processElement(String.format("%s/%s[%s]",
@@ -142,8 +141,8 @@ final class DOMDataReader extends XMLDataReader {
             n = n.getNextSibling();
         }
 
-        for (DescriptorElement de : i.getElements())
-            if ("(after)".equals(de.getElementName()))
+        for (ru.curs.xylophone.DescriptorElement de : i.getElements())
+            if ("(after)".equals(de.getName()))
                 processElement(elementPath, de, parent, position);
 
         getWriter().endSequence(i.getMerge(), i.getRegionName());
@@ -152,9 +151,9 @@ final class DOMDataReader extends XMLDataReader {
     @Override
     void process() throws XML2SpreadSheetError {
         // Обработка в DOM-режиме --- рекурсивная, управляемая дескриптором.
-        if (getDescriptor().getElementName().equals(
+        if (getDescriptor().getName().equals(
                 xmlData.getDocumentElement().getNodeName())) {
-            processElement("/" + getDescriptor().getElementName() + "[1]",
+            processElement("/" + getDescriptor().getName() + "[1]",
                     getDescriptor(), xmlData.getDocumentElement(), 1);
         }
         MergeRegionContainer.getContainer().apply(getWriter().getSheet());
