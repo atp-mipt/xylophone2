@@ -159,6 +159,7 @@ final class DOMDataReader extends XMLDataReader {
                     getDescriptor(), xmlData.getDocumentElement(), 1);
         }
         getWriter().applyMergedRegions(MergeRegionContainer.getContainer().getMergedRegions());
+        MergeRegionContainer.getContainer().clear();
 
         getWriter().flush();
     }
