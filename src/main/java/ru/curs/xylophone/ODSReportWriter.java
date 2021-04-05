@@ -35,13 +35,8 @@
 */
 package ru.curs.xylophone;
 
-import com.github.miachm.sods.Range;
-import com.github.miachm.sods.Sheet;
-import com.github.miachm.sods.SpreadSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
@@ -50,8 +45,8 @@ import java.util.stream.Stream;
  */
 final class ODSReportWriter extends ReportWriter {
 
-    ODSReportWriter(InputStream template, InputStream templateCopy) throws XML2SpreadSheetError {
-            throw new XML2SpreadSheetError("In work ...");
+    ODSReportWriter(InputStream template, InputStream templateCopy) throws XylophoneError {
+            throw new XylophoneError("In work ...");
     }
 
     @Override
@@ -70,7 +65,7 @@ final class ODSReportWriter extends ReportWriter {
     }
 
     @Override
-    public void flush() throws IOException {
+    public void flush() {
         // TODO Auto-generated method stub
 
     }
@@ -102,7 +97,6 @@ final class ODSReportWriter extends ReportWriter {
 
     @Override
     void applyMergedRegions(Stream<CellRangeAddress> mergedRegions){
-//        mergedRegions.forEach(activeResultSheet::addMergedRegion);
         // TODO Auto-generated method stub
 
     }

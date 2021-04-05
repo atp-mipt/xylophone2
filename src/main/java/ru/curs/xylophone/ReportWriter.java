@@ -87,12 +87,12 @@ abstract class ReportWriter {
      *            Тип форматировщика
      * @param output
      *            Поток для вывода результата
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             В случае, если шаблон имеет неверный формат
      */
     static ReportWriter createWriter(InputStream template, OutputType type,
             boolean copyTemplate, OutputStream output)
-            throws XML2SpreadSheetError, Exception {
+            throws XylophoneError {
         InputStream localTemplate = template;
         InputStream templateCopy = null;
         try {
@@ -103,7 +103,7 @@ abstract class ReportWriter {
                 template.close();
             }
         } catch (IOException e) {
-            throw new XML2SpreadSheetError(e.getMessage());
+            throw new XylophoneError(e.getMessage());
         }
         ReportWriter result;
         switch (type) {
@@ -141,13 +141,13 @@ abstract class ReportWriter {
      *            Стартовая колонка сквозных строк
      * @param endRepeatingRow
      *            Конечная колонка сквозных строк
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             В случае ошибок операции
      */
     public void sheet(String sheetName, String sourceSheet,
             int startRepeatingColumn, int endRepeatingColumn,
             int startRepeatingRow, int endRepeatingRow)
-            throws XML2SpreadSheetError {
+            throws XylophoneError {
         newSheet(sheetName, sourceSheet, startRepeatingColumn,
                 endRepeatingColumn, startRepeatingRow, endRepeatingRow);
 
@@ -239,11 +239,11 @@ abstract class ReportWriter {
      * @param range
      *            диапазон листа шаблона, который надо скопировать, заполнив
      *            данными
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             Если что-то пошло не так.
      */
     public void section(XMLContext context, String sourceSheet,
-            RangeAddress range, boolean pagebreak) throws XML2SpreadSheetError {
+            RangeAddress range, boolean pagebreak) throws XylophoneError {
         // На вершине стека должен находиться как минимум диапазон листа. Если
         // пользователь не создал листа, делаем это за него.
         if (blocks.isEmpty())
@@ -308,10 +308,10 @@ abstract class ReportWriter {
     abstract void newSheet(String sheetName, String sourceSheet,
             int startRepeatingColumn, int endRepeatingColumn,
             int startRepeatingRow, int endRepeatingRow)
-            throws XML2SpreadSheetError;
+            throws XylophoneError;
 
     abstract void putSection(XMLContext context, CellAddress growthPoint2,
-            String sourceSheet, RangeAddress range) throws XML2SpreadSheetError;
+            String sourceSheet, RangeAddress range) throws XylophoneError;
 
     abstract void mergeUp(CellAddress a1, CellAddress a2);
 
@@ -324,12 +324,11 @@ abstract class ReportWriter {
     /**
      * Сбрасывает результат создания документа в поток.
      *
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             при возникновении ошибки сохранения
      */
-    public abstract void flush() throws Exception;
+    public abstract void flush() throws XylophoneError;
 
     abstract void applyMergedRegions(Stream<CellRangeAddress> mergedRegions);
 
-//    public abstract Sheet getSheet();
 }

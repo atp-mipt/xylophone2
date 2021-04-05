@@ -55,7 +55,7 @@ final class XLSReportWriter extends POIReportWriter {
     private HSSFWorkbook wb;
 
     XLSReportWriter(InputStream template, InputStream templateCopy)
-            throws XML2SpreadSheetError {
+            throws XylophoneError {
         super(template, templateCopy);
     }
 

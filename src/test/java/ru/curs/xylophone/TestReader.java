@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.After;
 import org.junit.Rule;
@@ -74,7 +73,7 @@ public class TestReader {
 	}
 
 	@Test
-	public void testParseDescriptor() throws XML2SpreadSheetError {
+	public void testParseDescriptor() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("testdescriptor.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
@@ -122,7 +121,7 @@ public class TestReader {
 	}
 
 	@Test
-	public void testDOMReader1() throws XML2SpreadSheetError, Exception {
+	public void testDOMReader1() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("testdescriptor.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
@@ -138,7 +137,7 @@ public class TestReader {
 	}
 
 	@Test
-	public void testDOMReader2() throws XML2SpreadSheetError, Exception {
+	public void testDOMReader2() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("testdescriptor2.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
@@ -153,7 +152,7 @@ public class TestReader {
 	}
 
 	@Test
-	public void testSAXReader1() throws XML2SpreadSheetError, Exception {
+	public void testSAXReader1() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("testdescriptor.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
@@ -167,7 +166,7 @@ public class TestReader {
 		boolean itHappened = false;
 		try {
 			reader.process();
-		} catch (XML2SpreadSheetError e) {
+		} catch (XylophoneError e) {
 			itHappened = true;
 			assertTrue(e.getMessage().contains(
 					"only one iteration element is allowed"));
@@ -177,7 +176,7 @@ public class TestReader {
 	}
 
 	@Test
-	public void testSAXReader2() throws XML2SpreadSheetError, Exception {
+	public void testSAXReader2() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("testsaxdescriptor.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
@@ -192,7 +191,7 @@ public class TestReader {
 	}
 
 	@Test
-	public void testSAXReader3() throws XML2SpreadSheetError, Exception {
+	public void testSAXReader3() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("testsaxdescriptor2.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
@@ -206,12 +205,12 @@ public class TestReader {
 	}
 
 	@Test
-	public void testParsingDescriptorWithElementInsideElementShouldFail() throws XML2SpreadSheetError {
+	public void testParsingDescriptorWithElementInsideElementShouldFail() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("test_descriptor_with_element_inside_element.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
-		expectedException.expect(XML2SpreadSheetError.class);
+		expectedException.expect(XylophoneError.class);
 		expectedException.expectMessage("Tag <element> is not allowed inside <element>. Error inside element with name titlepage.");
 
 		DummyWriter w = new DummyWriter();
@@ -221,12 +220,12 @@ public class TestReader {
 	}
 
 	@Test
-	public void testParsingDescriptorWithIterationInsideIterationShouldFail() throws XML2SpreadSheetError {
+	public void testParsingDescriptorWithIterationInsideIterationShouldFail() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("test_descriptor_with_iteration_inside_iteration.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
-		expectedException.expect(XML2SpreadSheetError.class);
+		expectedException.expect(XylophoneError.class);
 		expectedException.expectMessage("Tag <iteration> is not allowed inside <iteration>. " +
 				"Error inside element with name titlepage.");
 
@@ -237,12 +236,12 @@ public class TestReader {
 	}
 
 	@Test
-	public void testParsingDescriptorWithOutputInsideIterationShouldFail() throws XML2SpreadSheetError {
+	public void testParsingDescriptorWithOutputInsideIterationShouldFail() throws XylophoneError {
 		descrStream = TestReader.class
 				.getResourceAsStream("test_descriptor_with_output_inside_iteration.xml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
-		expectedException.expect(XML2SpreadSheetError.class);
+		expectedException.expect(XylophoneError.class);
 		expectedException.expectMessage("Tag <output> is not allowed inside <iteration>. " +
 				"Error inside element with name titlepage.");
 

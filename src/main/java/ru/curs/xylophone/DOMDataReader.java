@@ -54,14 +54,14 @@ final class DOMDataReader extends XMLDataReader {
     private final Document xmlData;
 
     DOMDataReader(InputStream xmlData, DescriptorElement xmlDescriptor,
-            ReportWriter writer) throws XML2SpreadSheetError {
+            ReportWriter writer) throws XylophoneError {
         super(writer, xmlDescriptor);
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();
             this.xmlData = db.parse(xmlData);
         } catch (Exception e) {
-            throw new XML2SpreadSheetError("Error while parsing input data: "
+            throw new XylophoneError("Error while parsing input data: "
                     + e.getMessage());
         }
 
@@ -69,7 +69,7 @@ final class DOMDataReader extends XMLDataReader {
 
     // В режиме итерации нашёлся подходящий элемент
     private void processElement(String elementPath, DescriptorElement de,
-            Element xe, int position) throws Exception {
+            Element xe, int position) throws XylophoneError {
         XMLContext context = null;
         for (DescriptorSubelement se : de.getSubelements()) {
             if (se instanceof DescriptorIteration) {
@@ -89,7 +89,7 @@ final class DOMDataReader extends XMLDataReader {
 
     // По субэлементам текущего элемента надо провести итерацию
     private void processIteration(String elementPath, Element parent,
-            DescriptorIteration i, int position) throws XML2SpreadSheetError, Exception {
+            DescriptorIteration i, int position) throws XylophoneError {
 
         final HashMap<String, Integer> elementIndices = new HashMap<>();
 
@@ -151,7 +151,7 @@ final class DOMDataReader extends XMLDataReader {
 
 
     @Override
-    void process() throws Exception {
+    void process() throws XylophoneError {
         // Обработка в DOM-режиме --- рекурсивная, управляемая дескриптором.
         if (getDescriptor().getElementName().equals(
                 xmlData.getDocumentElement().getNodeName())) {

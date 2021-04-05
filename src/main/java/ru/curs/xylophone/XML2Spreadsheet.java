@@ -64,12 +64,12 @@ public final class XML2Spreadsheet {
      * @param useSAX        Режим процессинга (DOM или SAX).
      * @param copyTemplate  Копировать ли шаблон полностью перед началом обработки.
      * @param output        Поток, в который записывается результирующий отчёт.
-     * @throws XML2SpreadSheetError в случае возникновения ошибок
+     * @throws XylophoneError в случае возникновения ошибок
      */
     public static void process(InputStream xmlData, InputStream xmlDescriptor,
                                InputStream template, OutputType outputType, boolean useSAX,
                                boolean copyTemplate, OutputStream output)
-            throws XML2SpreadSheetError, Exception {
+            throws XylophoneError {
         ReportWriter writer = ReportWriter.createWriter(template, outputType,
                 copyTemplate, output);
         XMLDataReader reader = XMLDataReader.createReader(xmlData,
@@ -86,17 +86,17 @@ public final class XML2Spreadsheet {
      * @param template      Шаблон отчёта.
      * @param useSAX        Режим процессинга (DOM или SAX).
      * @param copyTemplate  Копировать ли шаблон полностью перед началом обработки.
-     * @throws XML2SpreadSheetError в случае возникновения ошибок
+     * @throws XylophoneError в случае возникновения ошибок
      * @throws IOException          Если файлы шаблона или дескриптора не найдены или произошла
      *                              иная ошибка ввода-вывода.
      */
     public static Workbook toPOIWorkbook(InputStream xmlData,
                                          File xmlDescriptor, File template, boolean useSAX,
-                                         boolean copyTemplate) throws XML2SpreadSheetError, IOException, Exception {
+                                         boolean copyTemplate) throws XylophoneError, IOException {
 
         OutputType outputType = getOutputType(template);
         if (!(outputType == OutputType.XLS || outputType == OutputType.XLSX))
-            throw new XML2SpreadSheetError(
+            throw new XylophoneError(
                     "toPOIWorkbook method works only for POI output types (XLS, XLSX).");
 
         try (InputStream descr = new FileInputStream(xmlDescriptor);
@@ -126,11 +126,11 @@ public final class XML2Spreadsheet {
      * @param outputType    Тип шаблона отчёта (OpenOffice, XLS, XLSX).
      * @param useSAX        Режим процессинга (DOM или SAX).
      * @param output        Поток, в который записывается результирующий отчёт.
-     * @throws XML2SpreadSheetError в случае возникновения ошибок
+     * @throws XylophoneError в случае возникновения ошибок
      */
     public static void process(InputStream xmlData, InputStream xmlDescriptor,
                                InputStream template, OutputType outputType, boolean useSAX,
-                               OutputStream output) throws XML2SpreadSheetError, Exception {
+                               OutputStream output) throws XylophoneError {
         process(xmlData, xmlDescriptor, template, outputType, useSAX, false,
                 output);
     }
@@ -147,12 +147,11 @@ public final class XML2Spreadsheet {
      * @param copyTemplate  Копировать ли шаблон.
      * @param output        Поток, в который записывается результирующий отчёт.
      * @throws FileNotFoundException в случае, если указанные файлы не существуют
-     * @throws XML2SpreadSheetError  в случае иных ошибок
+     * @throws XylophoneError  в случае иных ошибок
      */
     public static void process(InputStream xmlData, File xmlDescriptor,
                                File template, boolean useSAX, boolean copyTemplate,
-                               OutputStream output) throws FileNotFoundException,
-            XML2SpreadSheetError, Exception {
+                               OutputStream output) throws FileNotFoundException, XylophoneError {
         OutputType outputType = getOutputType(template);
         try (
                 InputStream descr = new FileInputStream(xmlDescriptor);
@@ -168,7 +167,7 @@ public final class XML2Spreadsheet {
     }
 
     private static OutputType getOutputType(File template)
-            throws XML2SpreadSheetError {
+            throws XylophoneError {
         String buf = template.toString();
         int dotInd = buf.lastIndexOf('.');
         buf = (dotInd > 0 && dotInd < buf.length()) ? buf.substring(dotInd + 1)
@@ -181,7 +180,7 @@ public final class XML2Spreadsheet {
         } else if ("xlsx".equalsIgnoreCase(buf)) {
             outputType = OutputType.XLSX;
         } else {
-            throw new XML2SpreadSheetError(
+            throw new XylophoneError(
                     "Cannot define output format, template has non-standard extention.");
         }
         return outputType;
@@ -198,11 +197,11 @@ public final class XML2Spreadsheet {
      * @param useSAX        Режим процессинга (false, если DOM, или true, если SAX).
      * @param output        Поток, в который записывается результирующий отчёт.
      * @throws FileNotFoundException в случае, если указанные файлы не существуют
-     * @throws XML2SpreadSheetError  в случае иных ошибок
+     * @throws XylophoneError  в случае иных ошибок
      */
     public static void process(InputStream xmlData, File xmlDescriptor,
                                File template, boolean useSAX, OutputStream output)
-            throws FileNotFoundException, XML2SpreadSheetError, Exception {
+            throws FileNotFoundException, XylophoneError {
         process(xmlData, xmlDescriptor, template, useSAX, false, output);
     }
 }

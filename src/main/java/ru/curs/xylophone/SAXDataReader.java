@@ -149,7 +149,7 @@ final class SAXDataReader extends XMLDataReader {
     }
 
     @Override
-    void process() throws XML2SpreadSheetError, Exception {
+    void process() throws XylophoneError {
 
         final class Parser extends DefaultHandler {
             private final Deque<SAXElementDescriptor> elementsStack = new LinkedList<>();
@@ -182,7 +182,7 @@ final class SAXDataReader extends XMLDataReader {
                             for (DescriptorOutput o : sed.preOutputs)
                                 try {
                                     processOutput(sed.context, o);
-                                } catch (XML2SpreadSheetError e1) {
+                                } catch (XylophoneError e1) {
                                     throw new SAXException(e1.getMessage());
                                 }
                             // Начинаем обрамление итерации
@@ -192,7 +192,7 @@ final class SAXDataReader extends XMLDataReader {
                                     for (DescriptorOutput deo : sed.headerOutputs)
                                         processOutput(sed.context, deo);
                                 }
-                            } catch (XML2SpreadSheetError e1) {
+                            } catch (XylophoneError e1) {
                                 throw new SAXException(e1.getMessage());
                             }
                             found = true;
@@ -221,7 +221,7 @@ final class SAXDataReader extends XMLDataReader {
                     // По пост-выводам выполняем вывод
                     for (DescriptorOutput o : sed.postOutputs)
                         processOutput(sed.context, o);
-                } catch (XML2SpreadSheetError e1) {
+                } catch (XylophoneError e1) {
                     throw new SAXException(e1.getMessage());
                 }
             }
@@ -236,7 +236,7 @@ final class SAXDataReader extends XMLDataReader {
             TransformerFactory.newInstance().newTransformer()
                     .transform(xmlData, new SAXResult(parser));
         } catch (Exception e) {
-            throw new XML2SpreadSheetError("Error while processing XML data: "
+            throw new XylophoneError("Error while processing XML data: "
                     + e.getMessage());
 
         }

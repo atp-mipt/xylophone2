@@ -61,13 +61,13 @@ public class Main {
      *
      * @param args
      *            аргументы
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             в случае, если произошла ошибка конвертации
      * @throws FileNotFoundException
      *             в случае, если файл не найден
      */
     public static void main(String[] args) throws FileNotFoundException,
-            XML2SpreadSheetError, Exception {
+            XylophoneError {
 
         FileInputStream iff = null;
         File descr = null;

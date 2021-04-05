@@ -85,7 +85,7 @@ abstract class XMLDataReader {
                 final Attributes atts) throws SAXException {
 
             abstract class AttrReader<T> {
-                T getValue(String qName) throws XML2SpreadSheetError {
+                T getValue(String qName) throws XylophoneError {
                     String buf = atts.getValue(qName);
                     if (buf == null || "".equals(buf))
                         return getIfEmpty();
@@ -94,7 +94,7 @@ abstract class XMLDataReader {
                 }
 
                 abstract T getIfNotEmpty(String value)
-                        throws XML2SpreadSheetError;
+                        throws XylophoneError;
 
                 abstract T getIfEmpty();
             }
@@ -161,7 +161,7 @@ abstract class XMLDataReader {
                         RangeAddress range = (new AttrReader<RangeAddress>() {
                             @Override
                             RangeAddress getIfNotEmpty(String value)
-                                    throws XML2SpreadSheetError {
+                                    throws XylophoneError {
                                 return new RangeAddress(value);
                             }
 
@@ -193,7 +193,7 @@ abstract class XMLDataReader {
 
                         parserState = ParserState.OUTPUT;
                     } else {
-                        throw new XML2SpreadSheetError(String.format("Tag <element> is not allowed inside <element>. "
+                        throw new XylophoneError(String.format("Tag <element> is not allowed inside <element>. "
                                 + "Error inside element with name %s.", elementsStack.peek().getElementName()));
                     }
                     break;
@@ -217,14 +217,14 @@ abstract class XMLDataReader {
                         elementsStack.push(currElement);
                         parserState = ParserState.ELEMENT;
                     } else {
-                        throw new XML2SpreadSheetError(
+                        throw new XylophoneError(
                                 String.format("Tag <%s> is not allowed inside <iteration>. "
                                                 + "Error inside element with name %s.",
                                         localName, elementsStack.peek().getElementName()));
                     }
                     break;
                 }
-            } catch (XML2SpreadSheetError e) {
+            } catch (XylophoneError e) {
                 throw new SAXException(e.getMessage());
             }
         }
@@ -259,16 +259,16 @@ abstract class XMLDataReader {
      *            Режим обработки (DOM или SAX).
      * @param writer
      *            Объект, осуществляющий вывод.
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             В случае ошибки обработки дескриптора отчёта.
      */
     static XMLDataReader createReader(InputStream xmlData,
             InputStream xmlDescriptor, boolean useSAX, ReportWriter writer)
-            throws XML2SpreadSheetError {
+            throws XylophoneError {
         if (xmlData == null)
-            throw new XML2SpreadSheetError("XML Data is null.");
+            throw new XylophoneError("XML Data is null.");
         if (xmlDescriptor == null)
-            throw new XML2SpreadSheetError("XML descriptor is null.");
+            throw new XylophoneError("XML descriptor is null.");
 
         // Сначала парсится дескриптор и строится его объектное представление.
         DescriptorParser parser = new DescriptorParser();
@@ -279,7 +279,7 @@ abstract class XMLDataReader {
                     .transform(new StreamSource(xmlDescriptor),
                             new SAXResult(parser));
         } catch (Exception e) {
-            throw new XML2SpreadSheetError(
+            throw new XylophoneError(
                     "Error while processing XML descriptor: " + e.getMessage());
         }
         // Затем инстанцируется конкретная реализация (DOM или SAX) ридера
@@ -292,11 +292,11 @@ abstract class XMLDataReader {
     /**
      * Осуществляет генерацию отчёта.
      *
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             В случае возникновения ошибок ввода-вывода или при
      *             интерпретации данных, шаблона или дескриптора.
      */
-    abstract void process() throws XML2SpreadSheetError, Exception;
+    abstract void process() throws XylophoneError;
 
     /**
      * Общий для DOM и SAX реализации метод обработки вывода.
@@ -305,12 +305,12 @@ abstract class XMLDataReader {
      *            Контекст.
      * @param o
      *            Дескриптор секции.
-     * @throws XML2SpreadSheetError
+     * @throws XylophoneError
      *             В случае возникновения ошибок ввода-вывода или при
      *             интерпретации шаблона.
      */
     final void processOutput(XMLContext c, DescriptorOutput o)
-            throws XML2SpreadSheetError {
+            throws XylophoneError {
         if (o.getWorksheet() != null) {
             String wsName = c.calc(o.getWorksheet());
             getWriter().sheet(wsName, o.getSourceSheet(),
@@ -422,7 +422,7 @@ abstract class XMLDataReader {
 
         DescriptorOutput(String worksheet, RangeAddress range,
                 String sourceSheet, String repeatingCols, String repeatingRows,
-                boolean pageBreak) throws XML2SpreadSheetError {
+                boolean pageBreak) throws XylophoneError {
             this.worksheet = worksheet;
             this.range = range;
             this.sourceSheet = sourceSheet;
@@ -437,7 +437,7 @@ abstract class XMLDataReader {
                 this.startRepeatingRow = Integer.parseInt(m2.group(1));
                 this.endRepeatingRow = Integer.parseInt(m2.group(2));
             } else {
-                throw new XML2SpreadSheetError(String.format(
+                throw new XylophoneError(String.format(
                         "Invalid col/row range %s %s", repeatingCols,
                         repeatingRows));
             }
