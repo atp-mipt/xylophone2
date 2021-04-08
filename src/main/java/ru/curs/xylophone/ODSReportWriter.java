@@ -35,8 +35,12 @@
 */
 package ru.curs.xylophone;
 
+import com.github.miachm.sods.Range;
+import com.github.miachm.sods.Sheet;
+import com.github.miachm.sods.SpreadSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
@@ -45,16 +49,57 @@ import java.util.stream.Stream;
  */
 final class ODSReportWriter extends ReportWriter {
 
+    private SpreadSheet template;
+    private SpreadSheet result;
+    private Sheet activeTemplateSheet;
+    private Sheet activeResultSheet;
+
     ODSReportWriter(InputStream template, InputStream templateCopy) throws XylophoneError {
-            throw new XylophoneError("In work ...");
+        try {
+            this.template = new SpreadSheet(template);
+
+            if(templateCopy == null){
+                this.result = new SpreadSheet();
+            } else {
+                this.result = new SpreadSheet(templateCopy);
+            }
+
+        } catch ( IOException e) {
+            throw new XylophoneError(e.getMessage());
+        }
+
     }
 
     @Override
     void newSheet(String sheetName, String sourceSheet,
             int startRepeatingColumn, int endRepeatingColumn,
-            int startRepeatingRow, int endRepeatingRow) {
-        // TODO Auto-generated method stub
+            int startRepeatingRow, int endRepeatingRow) throws XylophoneError {
 
+        if (sourceSheet != null) {
+            activeTemplateSheet = template.getSheet(sourceSheet);
+        }
+        if (activeTemplateSheet == null) {
+            activeTemplateSheet = template.getSheet(0);
+        }
+        if (activeTemplateSheet == null) {
+            throw new XylophoneError(String.format(
+                    "Sheet '%s' does not exist.", sourceSheet));
+        }
+
+        activeResultSheet = result.getSheet(sourceSheet);
+        if (activeResultSheet != null) {
+            return;
+        }
+
+        try {
+            activeResultSheet = new Sheet(sheetName, activeTemplateSheet.getMaxRows(), activeTemplateSheet.getMaxColumns());
+            Range copyFrom = activeTemplateSheet.getDataRange();
+            copyFrom.copyTo(activeResultSheet.getDataRange());
+        } catch (Exception e){
+            throw new XylophoneError(e.getMessage());
+        }
+
+        result.appendSheet(activeResultSheet);
     }
 
     @Override
@@ -66,14 +111,22 @@ final class ODSReportWriter extends ReportWriter {
 
     @Override
     public void flush() {
-        // TODO Auto-generated method stub
-
+        try{
+            this.result.save(getOutput());
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     void mergeUp(CellAddress a1, CellAddress a2) {
-        // TODO Auto-generated method stub
+        int countRowsToMerge = 1 + Math.abs(a1.getRow() - a2.getRow());
+        int countColumnsToMerge = 1 + Math.abs(a1.getCol() - a2.getCol());
 
+        Range toMerge = activeResultSheet.getRange(a1.getRow(), a1.getCol(),
+                countRowsToMerge, countColumnsToMerge);
+
+        toMerge.merge();
     }
 
     // пока не понял что эта функция делает
@@ -83,21 +136,27 @@ final class ODSReportWriter extends ReportWriter {
 
     }
 
+    // from javadoc apache poi
+    // Sets a page break at the indicated row Breaks occur above
+    // the specified row and left of the specified column inclusive.
     @Override
     void putRowBreak(int rowNumber) {
         // TODO Auto-generated method stub
 
     }
 
+    // from javadoc apache poi
+    // Sets a page break at the indicated column.
     @Override
     void putColBreak(int colNumber) {
         // TODO Auto-generated method stub
 
     }
 
+    // import org.apache.poi.ss.util.CellRangeAddress;
     @Override
     void applyMergedRegions(Stream<CellRangeAddress> mergedRegions){
-        // TODO Auto-generated method stub
+//        mergedRegions.forEach(activeResultSheet::addMergedRegion);
 
     }
 
