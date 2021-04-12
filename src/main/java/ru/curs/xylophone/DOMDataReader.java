@@ -35,14 +35,15 @@
 */
 package ru.curs.xylophone;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import java.io.InputStream;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
-import java.util.HashMap;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Класс, ответственный за чтение из XML-файла и перенаправление команд на вывод
@@ -52,7 +53,7 @@ final class DOMDataReader extends XMLDataReader {
 
     private final Document xmlData;
 
-    DOMDataReader(InputStream xmlData, ru.curs.xylophone.DescriptorElement xmlDescriptor,
+    DOMDataReader(InputStream xmlData, DescriptorElement xmlDescriptor,
                   ReportWriter writer) throws XML2SpreadSheetError {
         super(writer, xmlDescriptor);
         try {
@@ -67,20 +68,20 @@ final class DOMDataReader extends XMLDataReader {
     }
 
     // В режиме итерации нашёлся подходящий элемент
-    private void processElement(String elementPath, ru.curs.xylophone.DescriptorElement de,
-            Element xe, int position) throws XML2SpreadSheetError {
+    private void processElement(String elementPath, DescriptorElement de,
+                                Element xe, int position) throws XML2SpreadSheetError {
         XMLContext context = null;
         for (DescriptorOutputBase se : de.getSubElements()) {
-            if (se instanceof ru.curs.xylophone.DescriptorIteration) {
-                processIteration(elementPath, xe, (ru.curs.xylophone.DescriptorIteration) se,
+            if (se instanceof DescriptorIteration) {
+                processIteration(elementPath, xe, (DescriptorIteration) se,
                         position);
-            } else if (se instanceof ru.curs.xylophone.DescriptorOutput) {
+            } else if (se instanceof DescriptorOutput) {
                 // Контекст имеет смысл создавать лишь если есть хоть один
                 // output
                 if (context == null)
                     context = new XMLContext.DOMContext(xe, elementPath,
                             position);
-                processOutput(context, (ru.curs.xylophone.DescriptorOutput) se);
+                processOutput(context, (DescriptorOutput) se);
             }
         }
 
@@ -88,13 +89,13 @@ final class DOMDataReader extends XMLDataReader {
 
     // По субэлементам текущего элемента надо провести итерацию
     private void processIteration(String elementPath, Element parent,
-                                  ru.curs.xylophone.DescriptorIteration i, int position) throws XML2SpreadSheetError {
+                                  DescriptorIteration i, int position) throws XML2SpreadSheetError {
 
         final HashMap<String, Integer> elementIndices = new HashMap<>();
 
         getWriter().startSequence(i.isHorizontal());
 
-        for (ru.curs.xylophone.DescriptorElement de : i.getElements())
+        for (DescriptorElement de : i.getElements())
             if ("(before)".equals(de.getName()))
                 processElement(elementPath, de, parent, position);
 
@@ -121,7 +122,7 @@ final class DOMDataReader extends XMLDataReader {
                         atts.put(att.getNodeName(), att.getNodeValue());
                     }
 
-                    for (ru.curs.xylophone.DescriptorElement e : i.getElements())
+                    for (DescriptorElement e : i.getElements())
                         if (compareNames(e.getName(), n.getNodeName(),
                                 atts)) {
                             found = true;
@@ -141,7 +142,7 @@ final class DOMDataReader extends XMLDataReader {
             n = n.getNextSibling();
         }
 
-        for (ru.curs.xylophone.DescriptorElement de : i.getElements())
+        for (DescriptorElement de : i.getElements())
             if ("(after)".equals(de.getName()))
                 processElement(elementPath, de, parent, position);
 

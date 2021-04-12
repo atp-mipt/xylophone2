@@ -1,11 +1,19 @@
 package ru.curs.xylophone;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@JsonIgnoreProperties(value = {
+        "startRepeatingColumn",
+        "endRepeatingColumn",
+        "startRepeatingRow",
+        "endRepeatingRow",
+        "pageBreak"})
 final class DescriptorOutput extends DescriptorOutputBase {
     private static final Pattern RANGE = Pattern
             .compile("(-?[0-9]+):(-?[0-9]+)");
@@ -26,7 +34,7 @@ final class DescriptorOutput extends DescriptorOutputBase {
             @JsonProperty("sourcesheet")    String sourceSheet,
             @JsonProperty("repeatingcols")  String repeatingCols,
             @JsonProperty("repeatingraws")  String repeatingRows,
-            @JsonProperty("pagebreak")      Boolean pageBreak) throws XML2SpreadSheetError
+            @JsonProperty("pagebreak")      String pageBreak) throws XML2SpreadSheetError
     {
         this(
                 worksheet,
@@ -34,7 +42,10 @@ final class DescriptorOutput extends DescriptorOutputBase {
                 sourceSheet,
                 repeatingCols,
                 repeatingRows,
-                pageBreak == null ? false : pageBreak);
+                pageBreak != null &&
+                        (pageBreak.equalsIgnoreCase("true") ||
+                                !pageBreak.equalsIgnoreCase("0"))
+        );
     }
 
     DescriptorOutput(String worksheet, RangeAddress range,
@@ -60,15 +71,53 @@ final class DescriptorOutput extends DescriptorOutputBase {
         }
     }
 
-    String getWorksheet() {
+    @JsonGetter("worksheet")
+    public String getWorksheet() {
         return worksheet;
     }
 
-    String getSourceSheet() {
+    @JsonGetter("sourcesheet")
+    public String getSourceSheet() {
         return sourceSheet;
     }
 
-    RangeAddress getRange() {
+    @JsonGetter("range")
+    public String getRangeString() {
+        if (range == null) return null;
+
+        String bottomRight = range.bottomRight().getAddress();
+        String topLeft = range.topLeft().getAddress();
+        if (bottomRight.equals(topLeft))
+            return bottomRight;
+        return range.getAddress();
+    }
+
+    @JsonGetter("repeatingcols")
+    public String getRepeatingCols()
+    {
+        if (startRepeatingColumn == -1 && endRepeatingColumn == -1)
+            return null;
+        return startRepeatingColumn + ":" + endRepeatingColumn;
+    }
+
+    @JsonGetter("repeatingrows")
+    public String getRepeatingRows()
+    {
+        if (startRepeatingRow == -1 && endRepeatingRow == -1)
+            return null;
+        return startRepeatingRow + ":" + endRepeatingRow;
+    }
+
+    @JsonGetter("pagebreak")
+    public String getPageBreakString() {
+        return pageBreak ? "true" : null;
+    }
+
+    public boolean getPageBreak() {
+        return pageBreak;
+    }
+
+    public RangeAddress getRange() {
         return range;
     }
 
@@ -86,9 +135,5 @@ final class DescriptorOutput extends DescriptorOutputBase {
 
     public int getEndRepeatingRow() {
         return endRepeatingRow;
-    }
-
-    public boolean getPageBreak() {
-        return pageBreak;
     }
 }

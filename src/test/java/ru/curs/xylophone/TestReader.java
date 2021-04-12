@@ -67,11 +67,11 @@ public class TestReader {
 	@Test
 	public void testParseDescriptor() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor.xml");
+				.getResourceAsStream("testdescriptor.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, false,null);
+				descrStream, false,null);
 		DescriptorElement d = reader.getDescriptor();
 
 		assertEquals(2, d.getSubElements().size());
@@ -115,13 +115,13 @@ public class TestReader {
 	@Test
 	public void testDOMReader1() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor.xml");
+				.getResourceAsStream("testdescriptor.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, false, w);
+				descrStream, false, w);
 		reader.process();
 		assertEquals(
 				"Q{TCQ{CCbQ{CC}C}}Q{TCQh{CCC}Q{CQh{CCC}CQh{CCC}CQh{CCC}}TCQh{}Q{}}F",
@@ -131,13 +131,13 @@ public class TestReader {
 	@Test
 	public void testDOMReader2() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor2.xml");
+				.getResourceAsStream("testdescriptor2.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false,false, w);
+				descrStream, false, w);
 		reader.process();
 		assertEquals("Q{TCQ{CCQ{CC}C}}Q{TCQh{CCC}Q{CQh{CCC}}TCQh{}Q{}}F", w
 				.getLog().toString());
@@ -146,13 +146,13 @@ public class TestReader {
 	@Test
 	public void testSAXReader1() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor.xml");
+				.getResourceAsStream("testdescriptor.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
 
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, true, w);
+				descrStream, true, w);
 		// Проверяем, что на некорректных данных выскакивает корректное
 		// сообщение об ошибке
 		boolean itHappened = false;
@@ -170,13 +170,13 @@ public class TestReader {
 	@Test
 	public void testSAXReader2() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testsaxdescriptor.xml");
+				.getResourceAsStream("testsaxdescriptor.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, false, w);
+				descrStream, false, w);
 		reader.process();
 		assertEquals("Q{TCQ{CCQ{CC}C}TQ{CQh{CCC}CQh{CCC}CQh{CCC}}TQ{}}F", w
 				.getLog().toString());
@@ -185,13 +185,13 @@ public class TestReader {
 	@Test
 	public void testSAXReader3() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testsaxdescriptor2.xml");
+				.getResourceAsStream("testsaxdescriptor2.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
 		// Проверяем последовательность генерируемых ридером команд
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
-				descrStream, false, false, w);
+				descrStream, false, w);
 		reader.process();
 		assertEquals("Q{TCQ{CCQ{CC}C}TQ{CQh{CCC}}TQ{}}F", w.getLog().toString());
 	}
@@ -199,48 +199,49 @@ public class TestReader {
 	@Test
 	public void testParsingDescriptorWithElementInsideElementShouldFail() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("test_descriptor_with_element_inside_element.xml");
+				.getResourceAsStream("test_descriptor_with_element_inside_element.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XML2SpreadSheetError.class);
-		expectedException.expectMessage("Tag <element> is not allowed inside <element>. Error inside element with name titlepage.");
+		expectedException.expectMessage("Error while processing json descriptor: " +
+				"Unrecognized field \"element\" (class ru.curs.xylophone.DescriptorElement), not marked as ignorable (2 known properties: \"name\", \"output-steps\"])");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
 		XMLDataReader.createReader(dataStream,
-				descrStream, false, false, w);
+				descrStream, false, w);
 	}
 
 	@Test
 	public void testParsingDescriptorWithIterationInsideIterationShouldFail() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("test_descriptor_with_iteration_inside_iteration.xml");
+				.getResourceAsStream("test_descriptor_with_iteration_inside_iteration.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XML2SpreadSheetError.class);
-		expectedException.expectMessage("Tag <iteration> is not allowed inside <iteration>. " +
-				"Error inside element with name titlepage.");
+		expectedException.expectMessage("Error while processing json descriptor: " +
+				"Cannot deserialize instance of `ru.curs.xylophone.DescriptorIteration` out of START_ARRAY token");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
 		XMLDataReader.createReader(dataStream,
-				descrStream, false, false, w);
+				descrStream, false, w);
 	}
 
 	@Test
 	public void testParsingDescriptorWithOutputInsideIterationShouldFail() throws XML2SpreadSheetError {
 		descrStream = TestReader.class
-				.getResourceAsStream("test_descriptor_with_output_inside_iteration.xml");
+				.getResourceAsStream("test_descriptor_with_output_inside_iteration.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XML2SpreadSheetError.class);
-		expectedException.expectMessage("Tag <output> is not allowed inside <iteration>. " +
-				"Error inside element with name titlepage.");
+		expectedException.expectMessage("Error while processing json descriptor: " +
+                "Cannot deserialize instance of `ru.curs.xylophone.DescriptorIteration` out of START_ARRAY token");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
 		XMLDataReader.createReader(dataStream,
-				descrStream, false, false, w);
+				descrStream, false, w);
 	}
 }
 
