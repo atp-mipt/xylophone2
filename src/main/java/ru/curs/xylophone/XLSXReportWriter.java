@@ -38,6 +38,7 @@ package ru.curs.xylophone;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -56,6 +57,23 @@ final class XLSXReportWriter extends POIReportWriter {
         super(template, templateCopy);
     }
 
+    void setResultWbMetadata() {
+        POIXMLProperties props = wb.getProperties();
+
+        POIXMLProperties.CoreProperties coreProp = props.getCoreProperties();
+        coreProp.setCreator("");
+        coreProp.setDescription("");
+        coreProp.setKeywords("");
+        coreProp.setTitle("");
+
+        POIXMLProperties.ExtendedProperties extProp = props.getExtendedProperties();
+        extProp.getUnderlyingProperties().setCompany("");
+
+        POIXMLProperties.CustomProperties custProp = props.getCustomProperties();
+        custProp.addProperty("Author", "");
+        custProp.addProperty("Program name", "");
+    }
+
     @Override
     Workbook createResultWb(InputStream templateCopy)
             throws InvalidFormatException, IOException {
@@ -64,6 +82,7 @@ final class XLSXReportWriter extends POIReportWriter {
         } else {
             wb = (XSSFWorkbook) WorkbookFactory.create(templateCopy);
         }
+        setResultWbMetadata();
         return wb;
     }
 
