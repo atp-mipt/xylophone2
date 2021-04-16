@@ -224,7 +224,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XylophoneError.class);
-        expectedException.expectMessage("Error while processing json descriptor: " +
+    expectedException.expectMessage("Error while processing json descriptor: " +
                 "Cannot deserialize instance of `ru.curs.xylophone.descriptor.DescriptorIteration` out of START_ARRAY token");
 
 		DummyWriter w = new DummyWriter();
@@ -239,8 +239,8 @@ public class TestReader {
 				.getResourceAsStream("test_descriptor_with_output_inside_iteration.json");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
-		expectedException.expect(XylophoneError.class);
-        expectedException.expectMessage("Error while processing json descriptor: " +
+  	expectedException.expect(XylophoneError.class);
+    expectedException.expectMessage("Error while processing json descriptor: " +
                 "Cannot deserialize instance of `ru.curs.xylophone.descriptor.DescriptorIteration` out of START_ARRAY token");
 
 		DummyWriter w = new DummyWriter();

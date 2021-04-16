@@ -148,7 +148,9 @@ public class Main {
         System.out.println("Spreadsheet created successfully.");
     }
 
+
     private static void convertDescriptor(FileInputStream xmlDesc, FileOutputStream jsonDesc) throws XylophoneError {
+
         try {
             DescriptorElement root = XMLDescriptorParser.readXMLDescriptor(xmlDesc);
             root.jsonSerialize(jsonDesc);

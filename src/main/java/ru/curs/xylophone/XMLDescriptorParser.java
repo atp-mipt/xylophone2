@@ -196,7 +196,9 @@ class XMLDescriptorParser extends DefaultHandler {
         }
     }
 
+
     public static DescriptorElement readXMLDescriptor(InputStream descriptorStream) throws XylophoneError {
+
         XMLDescriptorParser parser = new XMLDescriptorParser();
         try {
             TransformerFactory
@@ -205,7 +207,9 @@ class XMLDescriptorParser extends DefaultHandler {
                     .transform(new StreamSource(descriptorStream),
                             new SAXResult(parser));
         } catch (Exception e) {
+
             throw new XylophoneError(
+
                     "Error while processing XML descriptor: " + e.getMessage());
         }
         return parser.root;

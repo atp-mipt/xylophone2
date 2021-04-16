@@ -95,6 +95,7 @@ public class MergeTest {
 
     @Test
     public void mergeComplexTestWithUpLeft() throws URISyntaxException, IOException, XylophoneError {
+
         File descriptorF = Paths.get(TestOverall.class.getResource("merge_descriptor_up_left.json").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class

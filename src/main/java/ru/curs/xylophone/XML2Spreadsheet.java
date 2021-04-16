@@ -124,25 +124,6 @@ public final class XML2Spreadsheet {
 
     /**
      * Запускает построение отчётов на исходных данных. Перегруженная версия
-     * метода, работающая на потоках.
-     *
-     * @param xmlData       Исходные данные.
-     * @param xmlDescriptor Дескриптор, описывающий порядок итерации по исходным данным.
-     * @param template      Шаблон отчёта.
-     * @param outputType    Тип шаблона отчёта (OpenOffice, XLS, XLSX).
-     * @param useSAX        Режим процессинга (DOM или SAX).
-     * @param output        Поток, в который записывается результирующий отчёт.
-     * @throws XylophoneError в случае возникновения ошибок
-     */
-    public static void process(InputStream xmlData, InputStream xmlDescriptor,
-                               InputStream template, OutputType outputType, boolean useSAX,
-                               OutputStream output) throws XylophoneError {
-        process(xmlData, xmlDescriptor, template, outputType, useSAX, false,
-                output);
-    }
-
-    /**
-     * Запускает построение отчётов на исходных данных. Перегруженная версия
      * метода, работающая на файлах (для удобства использования из
      * Python-скриптов).
      *
@@ -191,6 +172,4 @@ public final class XML2Spreadsheet {
         }
         return outputType;
     }
-
-
 }
