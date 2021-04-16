@@ -35,15 +35,18 @@
 */
 package ru.curs.xylophone;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import ru.curs.xylophone.descriptor.DescriptorElement;
+import ru.curs.xylophone.descriptor.DescriptorIteration;
+import ru.curs.xylophone.descriptor.DescriptorOutput;
+import ru.curs.xylophone.descriptor.DescriptorOutputBase;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * Класс, ответственный за чтение из XML-файла и перенаправление команд на вывод
@@ -71,7 +74,7 @@ final class DOMDataReader extends XMLDataReader {
     private void processElement(String elementPath, DescriptorElement de,
             Element xe, int position) throws XylophoneError {
         XMLContext context = null;
-        for (DescriptorSubelement se : de.getSubelements()) {
+        for (DescriptorOutputBase se : de.getSubElements()) {
             if (se instanceof DescriptorIteration) {
                 processIteration(elementPath, xe, (DescriptorIteration) se,
                         position);
@@ -96,14 +99,15 @@ final class DOMDataReader extends XMLDataReader {
         getWriter().startSequence(i.isHorizontal());
 
         for (DescriptorElement de : i.getElements())
-            if ("(before)".equals(de.getElementName()))
+            if ("(before)".equals(de.getName()))
                 processElement(elementPath, de, parent, position);
 
         Node n = parent.getFirstChild();
         int elementIndex = -1;
 
         int pos = 0;
-        iteration: while (n != null) {
+        iteration:
+        while (n != null) {
             // Нас интересуют только элементы
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 // Поддерживаем таблицу с нумерацией нод для вычисления пути
@@ -123,7 +127,7 @@ final class DOMDataReader extends XMLDataReader {
                     }
 
                     for (DescriptorElement e : i.getElements())
-                        if (compareNames(e.getElementName(), n.getNodeName(),
+                        if (compareNames(e.getName(), n.getNodeName(),
                                 atts)) {
                             found = true;
                             processElement(String.format("%s/%s[%s]",
@@ -143,7 +147,7 @@ final class DOMDataReader extends XMLDataReader {
         }
 
         for (DescriptorElement de : i.getElements())
-            if ("(after)".equals(de.getElementName()))
+            if ("(after)".equals(de.getName()))
                 processElement(elementPath, de, parent, position);
 
         getWriter().endSequence(i.getMerge(), i.getRegionName());
@@ -153,9 +157,9 @@ final class DOMDataReader extends XMLDataReader {
     @Override
     void process() throws XylophoneError {
         // Обработка в DOM-режиме --- рекурсивная, управляемая дескриптором.
-        if (getDescriptor().getElementName().equals(
+        if (getDescriptor().getName().equals(
                 xmlData.getDocumentElement().getNodeName())) {
-            processElement("/" + getDescriptor().getElementName() + "[1]",
+            processElement("/" + getDescriptor().getName() + "[1]",
                     getDescriptor(), xmlData.getDocumentElement(), 1);
         }
         getWriter().applyMergedRegions(MergeRegionContainer.getContainer().getMergedRegions());

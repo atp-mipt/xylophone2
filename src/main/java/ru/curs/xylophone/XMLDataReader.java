@@ -35,21 +35,13 @@
 */
 package ru.curs.xylophone;
 
+import ru.curs.xylophone.descriptor.DescriptorElement;
+import ru.curs.xylophone.descriptor.DescriptorOutput;
+
 import java.io.InputStream;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Класс, ответственный за чтение из XML-файла и перенаправление команд на вывод
@@ -57,8 +49,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 abstract class XMLDataReader {
 
-    private static final Pattern RANGE = Pattern
-            .compile("(-?[0-9]+):(-?[0-9]+)");
     private static final Pattern XQUERY = Pattern
             .compile("([^\\[]+)\\[@([^=]+)=('([^']+)'|\"([^\"]+)\")]");
 
@@ -259,40 +249,39 @@ abstract class XMLDataReader {
      *            Режим обработки (DOM или SAX).
      * @param writer
      *            Объект, осуществляющий вывод.
-     * @throws XylophoneError
+     * @throws XML2SpreadSheetError
      *             В случае ошибки обработки дескриптора отчёта.
      */
-    static XMLDataReader createReader(InputStream xmlData,
-            InputStream xmlDescriptor, boolean useSAX, ReportWriter writer)
+    static XMLDataReader createReader(
+            InputStream xmlData,
+            InputStream descriptorStream,
+            boolean useSAX,
+            ReportWriter writer)
             throws XylophoneError {
         if (xmlData == null)
-            throw new XylophoneError("XML Data is null.");
+            throw new XML2SpreadSheetError("XML Data is null.");
         if (xmlDescriptor == null)
-            throw new XylophoneError("XML descriptor is null.");
+            throw new XML2SpreadSheetError("XML descriptor is null.");
 
         // Сначала парсится дескриптор и строится его объектное представление.
-        DescriptorParser parser = new DescriptorParser();
+        DescriptorElement root;
         try {
-            TransformerFactory
-                    .newInstance()
-                    .newTransformer()
-                    .transform(new StreamSource(xmlDescriptor),
-                            new SAXResult(parser));
+            root = DescriptorElement.jsonDeserialize(descriptorStream);
         } catch (Exception e) {
             throw new XylophoneError(
-                    "Error while processing XML descriptor: " + e.getMessage());
+                    "Error while processing json descriptor: " + e.getMessage());
         }
         // Затем инстанцируется конкретная реализация (DOM или SAX) ридера
         if (useSAX)
-            return new SAXDataReader(xmlData, parser.root, writer);
+            return new SAXDataReader(xmlData, root, writer);
         else
-            return new DOMDataReader(xmlData, parser.root, writer);
+            return new DOMDataReader(xmlData, root, writer);
     }
 
     /**
      * Осуществляет генерацию отчёта.
      *
-     * @throws XylophoneError
+     * @throws XML2SpreadSheetError
      *             В случае возникновения ошибок ввода-вывода или при
      *             интерпретации данных, шаблона или дескриптора.
      */
@@ -305,7 +294,7 @@ abstract class XMLDataReader {
      *            Контекст.
      * @param o
      *            Дескриптор секции.
-     * @throws XylophoneError
+     * @throws XML2SpreadSheetError
      *             В случае возникновения ошибок ввода-вывода или при
      *             интерпретации шаблона.
      */
@@ -422,7 +411,7 @@ abstract class XMLDataReader {
 
         DescriptorOutput(String worksheet, RangeAddress range,
                 String sourceSheet, String repeatingCols, String repeatingRows,
-                boolean pageBreak) throws XylophoneError {
+                boolean pageBreak) throws XML2SpreadSheetError {
             this.worksheet = worksheet;
             this.range = range;
             this.sourceSheet = sourceSheet;
@@ -437,7 +426,7 @@ abstract class XMLDataReader {
                 this.startRepeatingRow = Integer.parseInt(m2.group(1));
                 this.endRepeatingRow = Integer.parseInt(m2.group(2));
             } else {
-                throw new XylophoneError(String.format(
+                throw new XML2SpreadSheetError(String.format(
                         "Invalid col/row range %s %s", repeatingCols,
                         repeatingRows));
             }

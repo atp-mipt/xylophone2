@@ -35,6 +35,8 @@
 */
 package ru.curs.xylophone;
 
+import ru.curs.xylophone.descriptor.DescriptorElement;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,7 +44,6 @@ import java.io.FileOutputStream;
 
 /**
  * Класс для запуска из командной строки.
- *
  */
 public class Main {
     private static final String DATA = "-data";
@@ -51,9 +52,10 @@ public class Main {
     private static final String OUT = "-out";
     private static final String SAX = "-sax";
     private static final String COPYTEMPLATE = "-copytemplate";
+    private static final String CONVERT_DESCRIPTOR = "-dconv"; // converts XML descriptor into JSON one
 
     private enum State {
-        READTOKEN, READDATA, READTEMPLATE, READDESCR, READOUT,
+        READTOKEN, READDATA, READTEMPLATE, READDESCR, READOUT, WRITEJSONDESCR,
     }
 
     /**
@@ -70,11 +72,19 @@ public class Main {
             XylophoneError {
 
         FileInputStream iff = null;
-        File descr = null;
+        FileInputStream descr = null;       // json (or xml for conversion only) descriptor
+        FileOutputStream xmlDescr = null;  // for xml->json converted descriptor
         File template = null;
         FileOutputStream output = null;
         boolean useSAX = false;
         boolean copyTemplate = false;
+
+        boolean convDescriptor = false;
+
+        if (args.length == 0) {
+            showHelp();
+            return;
+        }
 
         State state = State.READTOKEN;
 
@@ -93,11 +103,15 @@ public class Main {
                     useSAX = true;
                 else if (COPYTEMPLATE.equalsIgnoreCase(s))
                     copyTemplate = true;
-                else
+                    else if (CONVERT_DESCRIPTOR.equalsIgnoreCase(s))
+                        state = State.WRITEJSONDESCR;
+                    else {
                     showHelp();
+                        return;
+                    }
                 break;
             case READDATA:
-                iff = new FileInputStream(new File(s));
+                    iff = new FileInputStream(s);
                 state = State.READTOKEN;
                 break;
             case READTEMPLATE:
@@ -105,28 +119,43 @@ public class Main {
                 state = State.READTOKEN;
                 break;
             case READDESCR:
-                descr = new File(s);
+                    descr = new FileInputStream(s);
                 state = State.READTOKEN;
                 break;
             case READOUT:
-                output = new FileOutputStream(new File(s));
+                    output = new FileOutputStream(s);
+                    state = State.READTOKEN;
+                    break;
+                case WRITEJSONDESCR:
+                    xmlDescr = new FileOutputStream(s);
+                    convDescriptor = true;
                 state = State.READTOKEN;
                 break;
             default:
                 break;
             }
 
-        checkParams(iff, descr, template, output);
-        XML2Spreadsheet.process(iff, descr, template, useSAX, copyTemplate,
-                output);
+        if (convDescriptor && descr != null && xmlDescr != null) {
+            convertDescriptor(descr, xmlDescr);
+            return;
+        } else if (iff != null && descr != null && template != null && output != null)
+            XML2Spreadsheet.process(iff, descr, template, useSAX, copyTemplate, output);
+        else {
+            showHelp();
+            return;
+        }
 
         System.out.println("Spreadsheet created successfully.");
     }
 
-    private static void checkParams(FileInputStream iff, File descr,
-            File template, FileOutputStream output) {
-        if (iff == null || descr == null || template == null || output == null)
-            showHelp();
+    private static void convertDescriptor(FileInputStream xmlDesc, FileOutputStream jsonDesc) throws XML2SpreadSheetError {
+        try {
+            DescriptorElement root = XMLDescriptorParser.readXMLDescriptor(xmlDesc);
+            root.jsonSerialize(jsonDesc);
+        } catch (Exception e) {
+            throw new XML2SpreadSheetError("Error while converting XML to JSON descriptor: " + e.getMessage());
+        }
+        System.out.println("XML descriptor was successfully converted to JSON format.");
     }
 
     private static void showHelp() {
@@ -139,8 +168,6 @@ public class Main {
                 + "] use SAX engine (instead of DOM) to parse data file");
         System.out.println("[" + COPYTEMPLATE
                 + "] copy the template file to output before processing");
-        System.out.println(OUT + " output file");
-
-        System.exit(1);
+        System.out.println("[" + CONVERT_DESCRIPTOR + " xml_descriptor_file] converts XML descriptor into JSON one");
     }
 }
