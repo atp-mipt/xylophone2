@@ -192,22 +192,5 @@ public final class XML2Spreadsheet {
         return outputType;
     }
 
-    /**
-     * Запускает построение отчётов на исходных данных. Перегруженная версия
-     * метода, работающая на файлах (для удобства использования из
-     * Python-скриптов).
-     *
-     * @param xmlData       Исходные данные.
-     * @param xmlDescriptor Дескриптор, описывающий порядок итерации по исходным данным.
-     * @param template      Шаблон отчёта. Тип шаблона отчёта определяется по расширению.
-     * @param useSAX        Режим процессинга (false, если DOM, или true, если SAX).
-     * @param output        Поток, в который записывается результирующий отчёт.
-     * @throws FileNotFoundException в случае, если указанные файлы не существуют
-     * @throws XML2SpreadSheetError  в случае иных ошибок
-     */
-    public static void process(InputStream xmlData, File xmlDescriptor,
-                               File template, boolean useSAX, OutputStream output)
-            throws FileNotFoundException, XML2SpreadSheetError {
-        process(xmlData, xmlDescriptor, template, useSAX, false, output);
-    }
+
 }

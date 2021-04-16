@@ -148,12 +148,12 @@ public class Main {
         System.out.println("Spreadsheet created successfully.");
     }
 
-    private static void convertDescriptor(FileInputStream xmlDesc, FileOutputStream jsonDesc) throws XML2SpreadSheetError {
+    private static void convertDescriptor(FileInputStream xmlDesc, FileOutputStream jsonDesc) throws XylophoneError {
         try {
             DescriptorElement root = XMLDescriptorParser.readXMLDescriptor(xmlDesc);
             root.jsonSerialize(jsonDesc);
         } catch (Exception e) {
-            throw new XML2SpreadSheetError("Error while converting XML to JSON descriptor: " + e.getMessage());
+            throw new XylophoneError("Error while converting XML to JSON descriptor: " + e.getMessage());
         }
         System.out.println("XML descriptor was successfully converted to JSON format.");
     }

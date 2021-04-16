@@ -60,197 +60,15 @@ abstract class XMLDataReader {
         this.descriptor = descriptor;
     }
 
-    private enum ParserState {
-        ELEMENT, ITERATION, OUTPUT
-    }
-
-    private static final class DescriptorParser extends DefaultHandler {
-
-        private final Deque<DescriptorElement> elementsStack = new LinkedList<>();
-        private DescriptorElement root;
-        private ParserState parserState = ParserState.ITERATION;
-
-        @Override
-        public void startElement(String uri, String localName, String name,
-                final Attributes atts) throws SAXException {
-
-            abstract class AttrReader<T> {
-                T getValue(String qName) throws XylophoneError {
-                    String buf = atts.getValue(qName);
-                    if (buf == null || "".equals(buf))
-                        return getIfEmpty();
-                    else
-                        return getIfNotEmpty(buf);
-                }
-
-                abstract T getIfNotEmpty(String value)
-                        throws XylophoneError;
-
-                abstract T getIfEmpty();
-            }
-
-            final class StringAttrReader extends AttrReader<String> {
-                @Override
-                String getIfNotEmpty(String value) {
-                    return value;
-                }
-
-                @Override
-                String getIfEmpty() {
-                    return null;
-                }
-            }
-
-            try {
-                switch (parserState) {
-                case ELEMENT:
-                    if ("iteration".equals(localName)) {
-                        int index = (new AttrReader<Integer>() {
-                            @Override
-                            Integer getIfNotEmpty(String value) {
-                                return Integer.parseInt(value);
-                            }
-
-                            @Override
-                            Integer getIfEmpty() {
-                                return -1;
-                            }
-                        }).getValue("index");
-
-                        int merge = (new AttrReader<Integer>() {
-                            @Override
-                            Integer getIfNotEmpty(String value) {
-                                return Integer.parseInt(value);
-                            }
-
-                            @Override
-                            Integer getIfEmpty() {
-                                return 0;
-                            }
-                        }).getValue("merge");
-
-                        boolean horizontal = (new AttrReader<Boolean>() {
-                            @Override
-                            Boolean getIfNotEmpty(String value) {
-                                return "horizontal".equalsIgnoreCase(value);
-                            }
-
-                            @Override
-                            Boolean getIfEmpty() {
-                                return false;
-                            }
-                        }).getValue("mode");
-                        String regionName = new StringAttrReader()
-                                .getValue("regionName");
-                        DescriptorIteration currIteration = new DescriptorIteration(
-                                index, horizontal, merge, regionName);
-                        elementsStack.peek().getSubelements()
-                                .add(currIteration);
-                        parserState = ParserState.ITERATION;
-                    } else if ("output".equals(localName)) {
-                        RangeAddress range = (new AttrReader<RangeAddress>() {
-                            @Override
-                            RangeAddress getIfNotEmpty(String value)
-                                    throws XylophoneError {
-                                return new RangeAddress(value);
-                            }
-
-                            @Override
-                            RangeAddress getIfEmpty() {
-                                return null;
-                            }
-                        }).getValue("range");
-                        StringAttrReader sar = new StringAttrReader();
-
-                        boolean pagebreak = (new AttrReader<Boolean>() {
-                            @Override
-                            Boolean getIfNotEmpty(String value) {
-                                return "true".equalsIgnoreCase(value);
-                            }
-
-                            @Override
-                            Boolean getIfEmpty() {
-                                return false;
-                            }
-                        }).getValue("pagebreak");
-
-                        DescriptorOutput output = new DescriptorOutput(
-                                sar.getValue("worksheet"), range,
-                                sar.getValue("sourcesheet"),
-                                sar.getValue("repeatingcols"),
-                                sar.getValue("repeatingrows"), pagebreak);
-                        elementsStack.peek().getSubelements().add(output);
-
-                        parserState = ParserState.OUTPUT;
-                    } else {
-                        throw new XylophoneError(String.format("Tag <element> is not allowed inside <element>. "
-                                + "Error inside element with name %s.", elementsStack.peek().getElementName()));
-                    }
-                    break;
-                case ITERATION:
-                    if ("element".equals(localName)) {
-                        String elementName = (new StringAttrReader())
-                                .getValue("name");
-                        DescriptorElement currElement = new DescriptorElement(
-                                elementName);
-
-                        if (root == null)
-                            root = currElement;
-                        else {
-                            // Добываем контекст текущей итерации...
-                            List<DescriptorSubelement> subelements = elementsStack
-                                    .peek().getSubelements();
-                            DescriptorIteration iter = (DescriptorIteration) subelements
-                                    .get(subelements.size() - 1);
-                            iter.getElements().add(currElement);
-                        }
-                        elementsStack.push(currElement);
-                        parserState = ParserState.ELEMENT;
-                    } else {
-                        throw new XylophoneError(
-                                String.format("Tag <%s> is not allowed inside <iteration>. "
-                                                + "Error inside element with name %s.",
-                                        localName, elementsStack.peek().getElementName()));
-                    }
-                    break;
-                }
-            } catch (XylophoneError e) {
-                throw new SAXException(e.getMessage());
-            }
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String name) {
-            switch (parserState) {
-            case ELEMENT:
-                elementsStack.pop();
-                parserState = ParserState.ITERATION;
-                break;
-            case ITERATION:
-                parserState = ParserState.ELEMENT;
-                break;
-            case OUTPUT:
-                parserState = ParserState.ELEMENT;
-                break;
-            }
-        }
-
-    }
-
     /**
      * Создаёт объект-читальщик исходных данных на основании предоставленных
      * сведений.
      *
-     * @param xmlData
-     *            Поток с исходными данными.
-     * @param xmlDescriptor
-     *            Дескриптор отчёта.
-     * @param useSAX
-     *            Режим обработки (DOM или SAX).
-     * @param writer
-     *            Объект, осуществляющий вывод.
-     * @throws XML2SpreadSheetError
-     *             В случае ошибки обработки дескриптора отчёта.
+     * @param xmlData          Поток с исходными данными.
+     * @param descriptorStream Дескриптор отчёта.
+     * @param useSAX           Режим обработки (DOM или SAX).
+     * @param writer           Объект, осуществляющий вывод.
+     * @throws XylophoneError В случае ошибки обработки дескриптора отчёта.
      */
     static XMLDataReader createReader(
             InputStream xmlData,
@@ -259,9 +77,9 @@ abstract class XMLDataReader {
             ReportWriter writer)
             throws XylophoneError {
         if (xmlData == null)
-            throw new XML2SpreadSheetError("XML Data is null.");
-        if (xmlDescriptor == null)
-            throw new XML2SpreadSheetError("XML descriptor is null.");
+            throw new XylophoneError("Data stream is null.");
+        if (descriptorStream == null)
+            throw new XylophoneError("Descriptor stream is null.");
 
         // Сначала парсится дескриптор и строится его объектное представление.
         DescriptorElement root;
@@ -281,8 +99,7 @@ abstract class XMLDataReader {
     /**
      * Осуществляет генерацию отчёта.
      *
-     * @throws XML2SpreadSheetError
-     *             В случае возникновения ошибок ввода-вывода или при
+     * @throws XylophoneError В случае возникновения ошибок ввода-вывода или при
      *                              интерпретации данных, шаблона или дескриптора.
      */
     abstract void process() throws XylophoneError;
@@ -290,12 +107,9 @@ abstract class XMLDataReader {
     /**
      * Общий для DOM и SAX реализации метод обработки вывода.
      *
-     * @param c
-     *            Контекст.
-     * @param o
-     *            Дескриптор секции.
-     * @throws XML2SpreadSheetError
-     *             В случае возникновения ошибок ввода-вывода или при
+     * @param c Контекст.
+     * @param o Дескриптор секции.
+     * @throws XylophoneError В случае возникновения ошибок ввода-вывода или при
      *                              интерпретации шаблона.
      */
     final void processOutput(XMLContext c, DescriptorOutput o)
@@ -341,129 +155,6 @@ abstract class XMLDataReader {
 
     final DescriptorElement getDescriptor() {
         return descriptor;
-    }
-
-    static final class DescriptorElement {
-        private final String elementName;
-        private final List<DescriptorSubelement> subelements = new LinkedList<>();
-
-        DescriptorElement(String elementName) {
-            this.elementName = elementName;
-        }
-
-        String getElementName() {
-            return elementName;
-        }
-
-        List<DescriptorSubelement> getSubelements() {
-            return subelements;
-        }
-    }
-
-    abstract static class DescriptorSubelement {
-    }
-
-    static final class DescriptorIteration extends DescriptorSubelement {
-        private final int index;
-        private final int merge;
-        private final boolean horizontal;
-        private final String regionName;
-        private final List<DescriptorElement> elements = new LinkedList<>();
-
-        DescriptorIteration(int index, boolean horizontal, int merge,
-                String regionName) {
-            this.index = index;
-            this.horizontal = horizontal;
-            this.merge = merge;
-            this.regionName = regionName;
-        }
-
-        int getIndex() {
-            return index;
-        }
-
-        boolean isHorizontal() {
-            return horizontal;
-        }
-
-        List<DescriptorElement> getElements() {
-            return elements;
-        }
-
-        public int getMerge() {
-            return merge;
-        }
-
-        public String getRegionName() {
-            return regionName;
-        }
-    }
-
-    static final class DescriptorOutput extends DescriptorSubelement {
-        private final String worksheet;
-        private final RangeAddress range;
-        private final String sourceSheet;
-        private final int startRepeatingColumn;
-        private final int endRepeatingColumn;
-        private final int startRepeatingRow;
-        private final int endRepeatingRow;
-        private final boolean pageBreak;
-
-        DescriptorOutput(String worksheet, RangeAddress range,
-                String sourceSheet, String repeatingCols, String repeatingRows,
-                boolean pageBreak) throws XML2SpreadSheetError {
-            this.worksheet = worksheet;
-            this.range = range;
-            this.sourceSheet = sourceSheet;
-            this.pageBreak = pageBreak;
-            Matcher m1 = RANGE.matcher(repeatingCols == null ? "-1:-1"
-                    : repeatingCols);
-            Matcher m2 = RANGE.matcher(repeatingRows == null ? "-1:-1"
-                    : repeatingRows);
-            if (m1.matches() && m2.matches()) {
-                this.startRepeatingColumn = Integer.parseInt(m1.group(1));
-                this.endRepeatingColumn = Integer.parseInt(m1.group(2));
-                this.startRepeatingRow = Integer.parseInt(m2.group(1));
-                this.endRepeatingRow = Integer.parseInt(m2.group(2));
-            } else {
-                throw new XML2SpreadSheetError(String.format(
-                        "Invalid col/row range %s %s", repeatingCols,
-                        repeatingRows));
-            }
-
-        }
-
-        String getWorksheet() {
-            return worksheet;
-        }
-
-        String getSourceSheet() {
-            return sourceSheet;
-        }
-
-        RangeAddress getRange() {
-            return range;
-        }
-
-        public int getStartRepeatingColumn() {
-            return startRepeatingColumn;
-        }
-
-        public int getEndRepeatingColumn() {
-            return endRepeatingColumn;
-        }
-
-        public int getStartRepeatingRow() {
-            return startRepeatingRow;
-        }
-
-        public int getEndRepeatingRow() {
-            return endRepeatingRow;
-        }
-
-        public boolean getPageBreak() {
-            return pageBreak;
-        }
     }
 
 }
