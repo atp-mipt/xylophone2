@@ -174,8 +174,8 @@ final class ODSReportWriter extends ReportWriter {
                     val = sourceCell.getFormula();
                     buf = context.calc(val);
                     // УТЕЧКА АБСТРАКЦИИ
-//                    DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
-                    DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(null, buf);
+                    DynamicCellWithStyle<Range> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
+//                    DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(null, buf);
                     // Если ячейка содержит строковое представление числа и при
                     // этом содержит плейсхолдер --- меняем его на число.
                     if (!cellWithStyle.isStylesPresent()) {

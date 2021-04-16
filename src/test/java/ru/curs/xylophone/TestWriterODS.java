@@ -3,6 +3,7 @@ package ru.curs.xylophone;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;

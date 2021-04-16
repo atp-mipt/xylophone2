@@ -1,7 +1,5 @@
 package ru.curs.xylophone;
 
-import org.apache.poi.ss.usermodel.Cell;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * Wrapper for cell with style properties.
  */
-public final class DynamicCellWithStyle {
+public final class DynamicCellWithStyle<T> {
     private static final String KEY_REGEX = "([a-zA-Z][a-zA-Z0-9_\\-]*[a-zA-Z-0-9])";
     private static final String VALUE_REGEX = "\"(([^\"]|\"\")*)\"";
     private static final String PROPERTY_REGEX = KEY_REGEX + "\\s*:\\s*" + VALUE_REGEX;
@@ -20,11 +18,11 @@ public final class DynamicCellWithStyle {
     private static final Pattern PROPERTIES_PATTERN =
             Pattern.compile("\\|\\s*((" + PROPERTY_REGEX + "\\s*;?\\s*)+)$");
 
-    private Cell cell;
+    private T cell;
     private Map<String, String> properties;
     private String value;
 
-    private DynamicCellWithStyle(Cell cell, Map<String, String> properties, String value) {
+    private DynamicCellWithStyle(T cell, Map<String, String> properties, String value) {
         this.cell = cell;
         this.properties = properties;
         this.value = value;
@@ -37,14 +35,14 @@ public final class DynamicCellWithStyle {
      * @param record string value that we want to write to cell
      * @return DynamicCell where can be map of properties
      */
-    public static DynamicCellWithStyle defineCellStyle(Cell cell, String record) {
+    public static <T> DynamicCellWithStyle<T> defineCellStyle(T cell, String record) {
         Matcher matcher = PROPERTIES_PATTERN.matcher(record);
         if (matcher.find()) {
             String value = record.substring(0, matcher.start());
             Map<String, String> properties = parseProperties(matcher.group(1));
-            return new DynamicCellWithStyle(cell, properties, value);
+            return new DynamicCellWithStyle<T>(cell, properties, value);
         } else {
-            return new DynamicCellWithStyle(cell, Collections.emptyMap(), record);
+            return new DynamicCellWithStyle<T>(cell, Collections.emptyMap(), record);
         }
     }
 
@@ -53,7 +51,7 @@ public final class DynamicCellWithStyle {
      *
      * @return cell
      */
-    public Cell getCell() {
+    public T getCell() {
         return cell;
     }
 
