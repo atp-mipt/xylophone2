@@ -12,7 +12,7 @@ public class TestWriterODS {
     @Test
     public void WriterODS() throws XylophoneError, FileNotFoundException {
         InputStream descrStream = TestReader.class
-                .getResourceAsStream("testdescriptor3.xml");
+                .getResourceAsStream("testdescriptor.xml");
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("testdata.xml");
         InputStream templateStream = TestReader.class
@@ -21,12 +21,9 @@ public class TestWriterODS {
         File resultFile = new File("result.ods");
         OutputStream resultStream = new FileOutputStream(resultFile);
 
-        XML2SpreadseetBLOB b = new XML2SpreadseetBLOB();
-        OutputStream fos = b.getOutStream();
-
         XML2Spreadsheet.process(dataStream, descrStream, templateStream,
                 OutputType.ODS, false, resultStream);
-        assertTrue(b.size() > 6000);
+        fail();
     }
 
 }
