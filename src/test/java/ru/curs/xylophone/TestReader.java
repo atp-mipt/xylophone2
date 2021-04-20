@@ -1,13 +1,6 @@
 package ru.curs.xylophone;
 
-import java.util.stream.Stream;
-
 import org.apache.poi.ss.util.CellRangeAddress;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import org.apache.poi.ss.usermodel.Sheet;
 import org.approvaltests.Approvals;
 import org.junit.After;
 import org.junit.Rule;
@@ -20,6 +13,7 @@ import ru.curs.xylophone.descriptor.DescriptorOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 

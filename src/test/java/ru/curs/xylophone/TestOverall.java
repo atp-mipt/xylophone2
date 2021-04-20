@@ -67,7 +67,7 @@ public class TestOverall {
 		// write results to binary buffer
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		XML2Spreadsheet.process(dataStream, descrStream, templateStream,
-				OutputType.XLSX, false, bos);
+				OutputType.XLSX, false, false, bos);
 		byte[] writtenData = bos.toByteArray();
 
 		// verify it
