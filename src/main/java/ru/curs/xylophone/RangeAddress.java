@@ -41,17 +41,17 @@ import java.util.regex.Pattern;
 /**
  * Указывает на диапазон ячеек.
  */
-final class RangeAddress {
+public final class RangeAddress {
 
     private static final Pattern RANGE_ADDRESS = Pattern
             .compile("([A-Z]+[0-9]+)(:([A-Z]+[0-9]+))?");
     private final CellAddress topLeft;
     private final CellAddress bottomRight;
 
-    RangeAddress(String address) throws XML2SpreadSheetError {
+    public RangeAddress(String address) throws XylophoneError {
         Matcher m = RANGE_ADDRESS.matcher(address);
         if (!m.matches())
-            throw new XML2SpreadSheetError("Incorrect range: " + address);
+            throw new XylophoneError("Incorrect range: " + address);
         CellAddress c1 = new CellAddress(m.group(1));
         CellAddress c2 = new CellAddress(m.group(3) == null ? m.group(1)
                 : m.group(3));

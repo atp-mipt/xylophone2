@@ -56,9 +56,9 @@ public class TestOverall {
 	};
 
 	@Test
-	public void test1() throws XML2SpreadSheetError {
+	public void test1() throws XylophoneError {
 		InputStream descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor3.xml");
+				.getResourceAsStream("testdescriptor3.json");
 		InputStream dataStream = TestReader.class
 				.getResourceAsStream("testdata.xml");
 		InputStream templateStream = TestReader.class
@@ -84,9 +84,9 @@ public class TestOverall {
 	}
 
 	@Test
-	public void test2() throws XML2SpreadSheetError {
+	public void test2() throws XylophoneError {
 		InputStream descrStream = TestReader.class
-				.getResourceAsStream("testsaxdescriptor3.xml");
+				.getResourceAsStream("testsaxdescriptor3.json");
 		InputStream dataStream = TestReader.class
 				.getResourceAsStream("testdata.xml");
 		InputStream templateStream = TestReader.class
@@ -94,7 +94,7 @@ public class TestOverall {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		XML2Spreadsheet.process(dataStream, descrStream, templateStream,
-				OutputType.XLSX, true, bos);
+				OutputType.XLSX, true, false, bos);
 		byte[] writtenData = bos.toByteArray();
 
 		// verify it

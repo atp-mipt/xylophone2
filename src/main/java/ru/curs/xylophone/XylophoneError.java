@@ -35,66 +35,15 @@
 */
 package ru.curs.xylophone;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.stream.Stream;
-
-import org.apache.poi.POIXMLProperties;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 /**
- * Реализация ReportWriter для вывода в формат MSOffice (XLSX).
+ * Ошибка, происходящая при работе построителя отчётов.
+ *
  */
-final class XLSXReportWriter extends POIReportWriter {
+public final class XylophoneError extends Exception {
 
-    private XSSFWorkbook wb;
+    private static final long serialVersionUID = 4382588062277186741L;
 
-    XLSXReportWriter(InputStream template, InputStream templateCopy)
-            throws XylophoneError {
-        super(template, templateCopy);
-    }
-
-    void setResultWbMetadata() {
-        POIXMLProperties props = wb.getProperties();
-
-        POIXMLProperties.CoreProperties coreProp = props.getCoreProperties();
-        coreProp.setCreator("");
-        coreProp.setDescription("");
-        coreProp.setKeywords("");
-        coreProp.setTitle("");
-
-        POIXMLProperties.ExtendedProperties extProp = props.getExtendedProperties();
-        extProp.getUnderlyingProperties().setCompany("");
-
-        POIXMLProperties.CustomProperties custProp = props.getCustomProperties();
-        custProp.addProperty("Author", "");
-        custProp.addProperty("Program name", "");
-    }
-
-    @Override
-    Workbook createResultWb(InputStream templateCopy)
-            throws InvalidFormatException, IOException {
-        if (templateCopy == null) {
-            wb = new XSSFWorkbook();
-        } else {
-            wb = (XSSFWorkbook) WorkbookFactory.create(templateCopy);
-        }
-        setResultWbMetadata();
-        return wb;
-    }
-
-    @Override
-    void evaluate() {
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-    }
-
-    @Override
-    void applyMergedRegions(Stream<CellRangeAddress> mergedRegions){
-        mergedRegions.forEach(getSheet()::addMergedRegion);
+    public XylophoneError(String string) {
+        super(string);
     }
 }
