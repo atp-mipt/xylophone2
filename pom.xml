@@ -145,7 +145,7 @@
         <dependency>
             <groupId>bad.robot</groupId>
             <artifactId>simple-excel</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
