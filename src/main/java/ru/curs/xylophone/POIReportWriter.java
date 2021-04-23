@@ -165,11 +165,13 @@ abstract class POIReportWriter extends ReportWriter {
 
     private void updateActiveTemplateSheet(String sourceSheet)
             throws XylophoneError {
+        System.out.printf("updateActiveTemplateSheet %s%n", sourceSheet);
         if (sourceSheet != null) {
             activeTemplateSheet = template.getSheet(sourceSheet);
         }
         if (activeTemplateSheet == null) {
             activeTemplateSheet = template.getSheetAt(0);
+            System.out.println("not found, fall back to sheet 0");
         }
         if (activeTemplateSheet == null) {
             throw new XylophoneError(String.format(
@@ -182,7 +184,7 @@ abstract class POIReportWriter extends ReportWriter {
             int startRepeatingColumn, int endRepeatingColumn,
             int startRepeatingRow, int endRepeatingRow)
             throws XylophoneError {
-
+        System.out.printf("new sheet  %s<-%s%n", sheetName, sourceSheet);
         updateActiveTemplateSheet(sourceSheet);
         activeResultSheet = result.getSheet(sheetName);
         if (activeResultSheet != null) {
@@ -275,6 +277,8 @@ abstract class POIReportWriter extends ReportWriter {
     @Override
     void putSection(XMLContext context, CellAddress growthPoint,
             String sourceSheet, RangeAddress range) throws XylophoneError {
+        System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
+
         updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
             sheet("Sheet1", sourceSheet, -1, -1, -1, -1);
@@ -470,6 +474,8 @@ abstract class POIReportWriter extends ReportWriter {
     }
 
     private void writeTextOrNumber(Cell resultCell, String buf, boolean decide) {
+        System.out.printf("writeTextOrNumber %d:%d, '%s', %s%n",
+                resultCell.getColumnIndex(), resultCell.getRowIndex(), buf, decide);
         if (decide
                 && !"@".equals(resultCell.getCellStyle().getDataFormatString())) {
             Matcher numberMatcher = NUMBER.matcher(buf.trim());
@@ -545,6 +551,7 @@ abstract class POIReportWriter extends ReportWriter {
 
     @Override
     public void flush() throws XylophoneError {
+        System.out.println("flush");
         if (needEval) {
             evaluate();
         }

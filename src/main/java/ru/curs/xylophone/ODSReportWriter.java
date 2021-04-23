@@ -97,17 +97,8 @@ final class ODSReportWriter extends ReportWriter {
     void newSheet(String sheetName, String sourceSheet,
                   int startRepeatingColumn, int endRepeatingColumn,
                   int startRepeatingRow, int endRepeatingRow) throws XylophoneError {
-
-        if (sourceSheet != null) {
-            activeTemplateSheet = template.getSheet(sourceSheet);
-        }
-        if (activeTemplateSheet == null) {
-            activeTemplateSheet = template.getSheet(0);
-        }
-        if (activeTemplateSheet == null) {
-            throw new XylophoneError(String.format(
-                    "Sheet '%s' does not exist.", sourceSheet));
-        }
+        System.out.printf("new sheet  %s<-%s%n", sheetName, sourceSheet);
+        updateActiveTemplateSheet(sourceSheet);
 
         activeResultSheet = result.getSheet(sourceSheet);
         if (activeResultSheet != null) {
@@ -125,9 +116,26 @@ final class ODSReportWriter extends ReportWriter {
         result.appendSheet(activeResultSheet);
     }
 
+    private void updateActiveTemplateSheet(String sourceSheet) throws XylophoneError {
+        System.out.printf("updateActiveTemplateSheet %s%n", sourceSheet);
+        if (sourceSheet != null) {
+            activeTemplateSheet = template.getSheet(sourceSheet);
+        }
+        if (activeTemplateSheet == null) {
+            activeTemplateSheet = template.getSheet(0);
+            System.out.println("not found, fall back to sheet 0");
+        }
+        if (activeTemplateSheet == null) {
+            throw new XylophoneError(String.format(
+                    "Sheet '%s' does not exist.", sourceSheet));
+        }
+    }
+
     @Override
     void putSection(XMLContext context, CellAddress growthPoint,
                     String sourceSheet, RangeAddress range) throws XylophoneError {
+        System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
+        updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
             newSheet("Sheet1", sourceSheet, -1, -1, -1, -1);
         }
@@ -171,7 +179,7 @@ final class ODSReportWriter extends ReportWriter {
                     continue;
                 }
                 if (sourceCell.getValue().getClass().equals(String.class)) {
-                    val = sourceCell.getFormula();
+                    val = String.valueOf(sourceCell.getValue());
                     buf = context.calc(val);
                     // УТЕЧКА АБСТРАКЦИИ
                     DynamicCellWithStyle<Range> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
@@ -298,6 +306,9 @@ final class ODSReportWriter extends ReportWriter {
     }
 
     private void writeTextOrNumber(Range resultCell, String buf, boolean decide) {
+        System.out.printf("writeTextOrNumber %d:%d, '%s', %s%n", resultCell.getColumn(),
+                resultCell.getRow(), buf, decide);
+
         final Pattern NUMBER = Pattern
                 .compile("[+-]?\\d+(\\.\\d+)?([eE][+-]?\\d+)?");
         /**
@@ -331,6 +342,7 @@ final class ODSReportWriter extends ReportWriter {
 
     @Override
     public void flush() {
+        System.out.println("flush");
         try {
             this.result.save(getOutput());
         } catch (IOException e) {
