@@ -38,18 +38,11 @@ package ru.curs.xylophone;
 import com.github.miachm.sods.Range;
 import com.github.miachm.sods.Sheet;
 import com.github.miachm.sods.SpreadSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -131,9 +124,40 @@ final class ODSReportWriter extends ReportWriter {
         }
     }
 
+    private int getLastRowNum(Sheet activeSheet) {
+        int k = 0;
+        String data = String.valueOf(activeSheet.getRange(k, 1).getValue());
+        while (!data.equals("null")) {
+            k++;
+            if (k >= activeSheet.getMaxRows()) {
+                k = activeSheet.getMaxRows();
+                break;
+            }
+            Range test = activeSheet.getRange(k, 1);
+            data = String.valueOf(test.getValue());
+        }
+        return k;
+    }
+
+    private int getLastCellNum(Sheet activeSheet, int rowNum) {
+        int k = 0;
+        String data = String.valueOf(activeSheet.getRange(rowNum, k).getValue());
+        while (!data.equals("null")) {
+            k++;
+            if (k >= activeSheet.getMaxColumns()) {
+                k = activeSheet.getMaxColumns();
+                break;
+            }
+            Range test = activeSheet.getRange(rowNum, k);
+            data = String.valueOf(test.getValue());
+        }
+        return k;
+    }
+
     @Override
     void putSection(XMLContext context, CellAddress growthPoint,
                     String sourceSheet, RangeAddress range) throws XylophoneError {
+
         System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
         updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
@@ -141,13 +165,20 @@ final class ODSReportWriter extends ReportWriter {
         }
 
         int rowStart = range.top();
-        int rowFinish = Math.max(range.bottom(), activeResultSheet.getMaxRows());
+//        в реализации XLS тут максимум, но из-за особенностей библиотеки ODS пришлось
+//        сделать просто проверку в цикле на выход за пределы страницы
+//        int rowFinish = Math.max(range.bottom(), getLastRowNum(activeResultSheet));
+        int rowFinish = range.bottom();
+        System.out.println("first " + range.bottom() + " : " + getLastRowNum(activeResultSheet));
         for (int i = rowStart; i <= rowFinish; i++) {
-            final int numColumns = activeTemplateSheet.getMaxColumns();
+            final int numColumns = getLastCellNum(activeTemplateSheet, i - 1);
             if (i >= activeTemplateSheet.getMaxRows()) {
                 continue;
             }
             Range sourceRow = activeTemplateSheet.getRange(i - 1, 0, 1, numColumns);
+            if (sourceRow.getValue() == null) {
+                continue;
+            }
             Range resultRow;
             if (growthPoint.getRow() + i - rowStart >= activeResultSheet.getMaxRows()) {
                 activeResultSheet.appendRow();
@@ -160,10 +191,17 @@ final class ODSReportWriter extends ReportWriter {
 
             int colStart = range.left();
             int colFinish = Math.min(range.right(), numColumns);
+            System.out.println(range.right() + ":" + numColumns);
             for (int j = colStart; j <= colFinish; j++) {
                 Range sourceCell = sourceRow.getCell(0, j - 1);
-                if (sourceCell == null) {
+                if (sourceCell.getValue() == null) {
                     continue;
+                }
+                if(resultRow.getLastColumn() < growthPoint.getCol() + j - colStart - 1){
+                    activeResultSheet.appendColumns(j);
+                    resultRow = activeResultSheet.getRange(
+                            growthPoint.getRow() + i - rowStart - 1, 0, 1, numColumns+j);
+                    resultRow.setStyle(sourceRow.getStyle());
                 }
                 Range resultCell = resultRow.getCell(0,
                         growthPoint.getCol() + j - colStart - 1);
@@ -181,11 +219,10 @@ final class ODSReportWriter extends ReportWriter {
                 if (sourceCell.getValue().getClass().equals(String.class)) {
                     val = String.valueOf(sourceCell.getValue());
                     buf = context.calc(val);
-                    // УТЕЧКА АБСТРАКЦИИ
                     DynamicCellWithStyle<Range> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
-//                    DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(null, buf);
                     // Если ячейка содержит строковое представление числа и при
                     // этом содержит плейсхолдер --- меняем его на число.
+                    System.out.print(cellWithStyle.isStylesPresent() + "\n");
                     if (!cellWithStyle.isStylesPresent()) {
                         writeTextOrNumber(resultCell, buf,
                                 context.containsPlaceholder(val));

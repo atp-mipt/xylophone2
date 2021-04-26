@@ -277,8 +277,8 @@ abstract class POIReportWriter extends ReportWriter {
     @Override
     void putSection(XMLContext context, CellAddress growthPoint,
             String sourceSheet, RangeAddress range) throws XylophoneError {
-        System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
 
+        System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
         updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
             sheet("Sheet1", sourceSheet, -1, -1, -1, -1);
@@ -286,6 +286,7 @@ abstract class POIReportWriter extends ReportWriter {
 
         int rowStart = range.top();
         int rowFinish = Math.max(range.bottom(), activeResultSheet.getLastRowNum());
+        System.out.println("first " + range.bottom() + " : " + activeResultSheet.getLastRowNum());
         for (int i = rowStart; i <= rowFinish; i++) {
             Row sourceRow = activeTemplateSheet.getRow(i - 1);
             if (sourceRow == null) {
@@ -307,6 +308,7 @@ abstract class POIReportWriter extends ReportWriter {
 
             int colStart = range.left();
             int colFinish = Math.min(range.right(), sourceRow.getLastCellNum());
+            System.out.println(range.right() + ":" + sourceRow.getLastCellNum());
             for (int j = colStart; j <= colFinish; j++) {
                 Cell sourceCell = sourceRow.getCell(j - 1);
                 if (sourceCell == null) {
@@ -335,9 +337,10 @@ abstract class POIReportWriter extends ReportWriter {
                     // ДЛЯ СТРОКОВЫХ ЯЧЕЕК ВЫЧИСЛЯЕМ ПОДСТАНОВКИ!!
                     val = sourceCell.getStringCellValue();
                     buf = context.calc(val);
-                    DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
+                    DynamicCellWithStyle<Cell> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
                     // Если ячейка содержит строковое представление числа и при
                     // этом содержит плейсхолдер --- меняем его на число.
+                    System.out.print(cellWithStyle.isStylesPresent() + "\n");
                     if (!cellWithStyle.isStylesPresent()) {
                         writeTextOrNumber(resultCell, buf,
                                 context.containsPlaceholder(val));
