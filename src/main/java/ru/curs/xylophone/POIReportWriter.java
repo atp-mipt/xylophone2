@@ -186,6 +186,7 @@ abstract class POIReportWriter extends ReportWriter {
             throws XylophoneError {
         System.out.printf("new sheet  %s<-%s%n", sheetName, sourceSheet);
         updateActiveTemplateSheet(sourceSheet);
+
         activeResultSheet = result.getSheet(sheetName);
         if (activeResultSheet != null) {
             return;

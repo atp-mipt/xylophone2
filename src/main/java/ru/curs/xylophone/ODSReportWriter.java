@@ -101,7 +101,15 @@ final class ODSReportWriter extends ReportWriter {
         try {
             activeResultSheet = new Sheet(sheetName, activeTemplateSheet.getMaxRows(), activeTemplateSheet.getMaxColumns());
             Range copyFrom = activeTemplateSheet.getDataRange();
-            copyFrom.copyTo(activeResultSheet.getDataRange());
+            int numRows = copyFrom.getNumRows();
+            for (int i = 0; i < numRows; ++i) {
+                activeResultSheet.setRowHeight(i, activeTemplateSheet.getRowHeight(i));
+            }
+            int numColumns = copyFrom.getNumColumns();
+            for (int j = 0; j < numColumns; ++j) {
+                activeResultSheet.setColumnWidth(j, activeTemplateSheet.getColumnWidth(j));
+            }
+
         } catch (Exception e) {
             throw new XylophoneError(e.getMessage());
         }
@@ -172,7 +180,7 @@ final class ODSReportWriter extends ReportWriter {
         System.out.println("first " + range.bottom() + " : " + getLastRowNum(activeResultSheet));
         for (int i = rowStart; i <= rowFinish; i++) {
             final int numColumns = getLastCellNum(activeTemplateSheet, i - 1);
-            if (i >= activeTemplateSheet.getMaxRows()) {
+            if (i > activeTemplateSheet.getMaxRows()) {
                 continue;
             }
             Range sourceRow = activeTemplateSheet.getRange(i - 1, 0, 1, numColumns);
@@ -197,10 +205,10 @@ final class ODSReportWriter extends ReportWriter {
                 if (sourceCell.getValue() == null) {
                     continue;
                 }
-                if(resultRow.getLastColumn() < growthPoint.getCol() + j - colStart - 1){
+                if (resultRow.getLastColumn() < growthPoint.getCol() + j - colStart - 1) {
                     activeResultSheet.appendColumns(j);
                     resultRow = activeResultSheet.getRange(
-                            growthPoint.getRow() + i - rowStart - 1, 0, 1, numColumns+j);
+                            growthPoint.getRow() + i - rowStart - 1, 0, 1, numColumns + j);
                     resultRow.setStyle(sourceRow.getStyle());
                 }
                 Range resultCell = resultRow.getCell(0,
