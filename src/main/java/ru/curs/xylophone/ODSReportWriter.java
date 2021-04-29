@@ -134,30 +134,20 @@ final class ODSReportWriter extends ReportWriter {
 
     private int getLastRowNum(Sheet activeSheet) {
         int k = 0;
-        String data = String.valueOf(activeSheet.getRange(k, 1).getValue());
-        while (!data.equals("null")) {
-            k++;
-            if (k >= activeSheet.getMaxRows()) {
-                k = activeSheet.getMaxRows();
-                break;
+        while (activeSheet.getRange(k, 1).getValue() != null) {
+            if (++k >= activeSheet.getMaxRows()) {
+                return  activeSheet.getMaxRows();
             }
-            Range test = activeSheet.getRange(k, 1);
-            data = String.valueOf(test.getValue());
         }
         return k;
     }
 
     private int getLastCellNum(Sheet activeSheet, int rowNum) {
         int k = 0;
-        String data = String.valueOf(activeSheet.getRange(rowNum, k).getValue());
-        while (!data.equals("null")) {
-            k++;
-            if (k >= activeSheet.getMaxColumns()) {
-                k = activeSheet.getMaxColumns();
-                break;
+        while (activeSheet.getRange(rowNum, k).getValue() != null) {
+            if (++k >= activeSheet.getMaxColumns()) {
+                return  activeSheet.getMaxColumns();
             }
-            Range test = activeSheet.getRange(rowNum, k);
-            data = String.valueOf(test.getValue());
         }
         return k;
     }
