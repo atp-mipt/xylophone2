@@ -42,24 +42,22 @@ public enum OutputType {
     /**
      * Формат OpenOffice.
      */
-    ODS,
+    ODS("ods"),
 
     /**
      * Формат MS Office 97-2003.
      */
-    XLS,
+    XLS("xls"),
 
     /**
      * Формат MS Office Open Document Format.
      */
-    XLSX;
+    XLSX("xlsx");
 
-    private String extension;
+    private final String extension;
 
-    static {
-        ODS.extension = "ods";
-        XLS.extension = "xls";
-        XLSX.extension = "xlsx";
+    private OutputType(String extension) {
+        this.extension = extension;
     }
 
     public String getExtension() {
@@ -67,15 +65,12 @@ public enum OutputType {
     }
 
     public static OutputType fromExtension(String extension) throws XylophoneError {
-        if ("ods".equalsIgnoreCase(extension)) {
-            return OutputType.ODS;
-        } else if ("xls".equalsIgnoreCase(extension)) {
-            return OutputType.XLS;
-        } else if ("xlsx".equalsIgnoreCase(extension)) {
-            return OutputType.XLSX;
-        } else {
-            throw new XylophoneError(
-                    "Cannot define output format, template has non-standard extention.");
+        for (OutputType outputType : OutputType.values()) {
+            if (outputType.extension.equalsIgnoreCase(extension)) {
+                return outputType;
+            }
         }
+        throw new XylophoneError(
+                "Cannot define output format, template has non-standard extention.");
     }
 }
