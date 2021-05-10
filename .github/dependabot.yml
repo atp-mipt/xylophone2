@@ -5,18 +5,3 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: com.approvaltests:approvaltests
-    versions:
-    - 10.4.1
-    - 11.0.0
-    - 11.1.0
-  - dependency-name: org.apache.xmlgraphics:fop
-    versions:
-    - "2.6"
-  - dependency-name: junit:junit
-    versions:
-    - 4.13.2
-  - dependency-name: org.asciidoctor:asciidoctorj-diagram
-    versions:
-    - 2.1.1
