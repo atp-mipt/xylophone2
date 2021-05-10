@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;

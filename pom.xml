@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.13.1</junit.version>
         <mockito.version>3.9.0</mockito.version>
-        <poi.version>3.17</poi.version>
+        <poi.version>5.0.0</poi.version>
         <xmlgraphics.version>2.1</xmlgraphics.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.appassembler.plugin.version>2.1.0</maven.appassembler.plugin.version>
@@ -52,7 +52,7 @@
         <maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
-        <approval.version>9.5.0</approval.version>
+        <approval.version>11.2.3</approval.version>
     </properties>
 
     <distributionManagement>
@@ -66,7 +66,7 @@
         <repository>
             <id>bad.robot</id>
             <name>bad.robot repository on robotooling</name>
-            <url>http://www.robotooling.com/maven/</url>
+            <url>https://robotooling.com/maven/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>bad.robot</groupId>
             <artifactId>simple-excel</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
