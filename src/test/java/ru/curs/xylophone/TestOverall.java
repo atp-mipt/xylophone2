@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.approvaltests.Approvals;
 import org.approvaltests.approvers.FileApprover;
 import org.approvaltests.core.Options;
+import org.approvaltests.core.VerifyResult;
 import org.approvaltests.writers.ApprovalBinaryFileWriter;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,14 +45,14 @@ public class TestOverall {
 	 * 		             StyledCell.equals = org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals
 	 *
 	 */
-	public Function2<File, File, Boolean> compareSpreadsheetFiles = (actualFile, expectedFile) -> {
+	public Function2<File, File, VerifyResult> compareSpreadsheetFiles = (actualFile, expectedFile) -> {
 		try {
 			Workbook actual = new XSSFWorkbook(actualFile);
 			Workbook expected = new XSSFWorkbook(expectedFile);
-			return sameWorkbook(expected).matches(actual);
+			return VerifyResult.from(sameWorkbook(expected).matches(actual));
 		} catch (InvalidFormatException | IOException e) {
 			e.printStackTrace();
-			return false;
+			return VerifyResult.FAILURE;
 		}
 	};
 
