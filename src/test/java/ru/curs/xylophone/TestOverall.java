@@ -3,24 +3,18 @@ package ru.curs.xylophone;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import org.approvaltests.Approvals;
-import org.approvaltests.approvers.FileApprover;
-import org.approvaltests.core.Options;
 import org.approvaltests.core.VerifyResult;
-import org.approvaltests.writers.ApprovalBinaryFileWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
 import org.lambda.functions.Function2;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 import static bad.robot.excel.matchers.Matchers.sameWorkbook;
 
-
-public class TestOverall {
+public class TestOverall extends FullApprovalsTester {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -58,57 +52,14 @@ public class TestOverall {
 
 	@Test
 	public void test1() throws XylophoneError {
-		InputStream descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor3.json");
-		InputStream dataStream = TestReader.class
-				.getResourceAsStream("testdata.xml");
-		InputStream templateStream = TestReader.class
-				.getResourceAsStream("template.xlsx");
-
-		// write results to binary buffer
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		XML2Spreadsheet.process(dataStream, descrStream, templateStream,
-				OutputType.XLSX, false, false, bos);
-		byte[] writtenData = bos.toByteArray();
-
-		// verify it
-		Options options = new Options();
-		Approvals.verify(
-				new FileApprover(
-					new ApprovalBinaryFileWriter(new ByteArrayInputStream(writtenData),
-							"xlsx"),
-					options.forFile().getNamer(),
-					compareSpreadsheetFiles
-				),
-				options
-		);
+		approvalTest("testdescriptor3.json", "testdata.xml", "template.xlsx",
+				OutputType.XLSX, false);
 	}
 
 	@Test
 	public void test2() throws XylophoneError {
-		InputStream descrStream = TestReader.class
-				.getResourceAsStream("testsaxdescriptor3.json");
-		InputStream dataStream = TestReader.class
-				.getResourceAsStream("testdata.xml");
-		InputStream templateStream = TestReader.class
-				.getResourceAsStream("template.xlsx");
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		XML2Spreadsheet.process(dataStream, descrStream, templateStream,
-				OutputType.XLSX, true, false, bos);
-		byte[] writtenData = bos.toByteArray();
-
-		// verify it
-		Options options = new Options();
-		Approvals.verify(
-				new FileApprover(
-						new ApprovalBinaryFileWriter(new ByteArrayInputStream(writtenData),
-								"xlsx"),
-						options.forFile().getNamer(),
-						compareSpreadsheetFiles
-				),
-				options
-		);
+		approvalTest("testsaxdescriptor3.json", "testdata.xml", "template.xlsx",
+				OutputType.XLSX, true);
 	}
 
 }
