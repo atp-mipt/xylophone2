@@ -222,8 +222,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XylophoneError.class);
-    expectedException.expectMessage("Error while processing descriptor: " +
-                "Cannot deserialize instance of `ru.curs.xylophone.descriptor.DescriptorIteration` out of START_ARRAY token");
+    expectedException.expectMessage("Error while processing descriptor");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
@@ -238,8 +237,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
   	expectedException.expect(XylophoneError.class);
-    expectedException.expectMessage("Error while processing descriptor: " +
-                "Cannot deserialize instance of `ru.curs.xylophone.descriptor.DescriptorIteration` out of START_ARRAY token");
+    expectedException.expectMessage("Error while processing descriptor");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
