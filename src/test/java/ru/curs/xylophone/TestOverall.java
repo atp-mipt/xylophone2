@@ -3,16 +3,16 @@ package ru.curs.xylophone;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import org.approvaltests.Approvals;
-import org.approvaltests.approvers.FileApprover;
-import org.approvaltests.core.Options;
 import org.approvaltests.core.VerifyResult;
-import org.approvaltests.writers.ApprovalBinaryFileWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.lambda.functions.Function2;
 
+import java.io.File;
+import java.io.IOException;
+
+import static bad.robot.excel.matchers.Matchers.sameWorkbook;
 
 public class TestOverall extends FullApprovalsTester {
     @Rule
