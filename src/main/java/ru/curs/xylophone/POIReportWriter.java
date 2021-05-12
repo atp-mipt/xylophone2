@@ -165,13 +165,11 @@ abstract class POIReportWriter extends ReportWriter {
 
     private void updateActiveTemplateSheet(String sourceSheet)
             throws XylophoneError {
-        System.out.printf("updateActiveTemplateSheet %s%n", sourceSheet);
         if (sourceSheet != null) {
             activeTemplateSheet = template.getSheet(sourceSheet);
         }
         if (activeTemplateSheet == null) {
             activeTemplateSheet = template.getSheetAt(0);
-            System.out.println("not found, fall back to sheet 0");
         }
         if (activeTemplateSheet == null) {
             throw new XylophoneError(String.format(
@@ -184,7 +182,6 @@ abstract class POIReportWriter extends ReportWriter {
             int startRepeatingColumn, int endRepeatingColumn,
             int startRepeatingRow, int endRepeatingRow)
             throws XylophoneError {
-        System.out.printf("new sheet  %s<-%s%n", sheetName, sourceSheet);
         updateActiveTemplateSheet(sourceSheet);
 
         activeResultSheet = result.getSheet(sheetName);
@@ -279,7 +276,6 @@ abstract class POIReportWriter extends ReportWriter {
     void putSection(XMLContext context, CellAddress growthPoint,
             String sourceSheet, RangeAddress range) throws XylophoneError {
 
-        System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
         updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
             sheet("Sheet1", sourceSheet, -1, -1, -1, -1);
@@ -287,7 +283,6 @@ abstract class POIReportWriter extends ReportWriter {
 
         int rowStart = range.top();
         int rowFinish = Math.max(range.bottom(), activeResultSheet.getLastRowNum());
-        System.out.println("first " + range.bottom() + " : " + activeResultSheet.getLastRowNum());
         for (int i = rowStart; i <= rowFinish; i++) {
             Row sourceRow = activeTemplateSheet.getRow(i - 1);
             if (sourceRow == null) {
@@ -309,7 +304,6 @@ abstract class POIReportWriter extends ReportWriter {
 
             int colStart = range.left();
             int colFinish = Math.min(range.right(), sourceRow.getLastCellNum());
-            System.out.println(range.right() + ":" + sourceRow.getLastCellNum());
             for (int j = colStart; j <= colFinish; j++) {
                 Cell sourceCell = sourceRow.getCell(j - 1);
                 if (sourceCell == null) {
@@ -341,7 +335,6 @@ abstract class POIReportWriter extends ReportWriter {
                     DynamicCellWithStyle<Cell> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
                     // Если ячейка содержит строковое представление числа и при
                     // этом содержит плейсхолдер --- меняем его на число.
-                    System.out.print(cellWithStyle.isStylesPresent() + "\n");
                     if (!cellWithStyle.isStylesPresent()) {
                         writeTextOrNumber(resultCell, buf,
                                 context.containsPlaceholder(val));
@@ -478,8 +471,6 @@ abstract class POIReportWriter extends ReportWriter {
     }
 
     private void writeTextOrNumber(Cell resultCell, String buf, boolean decide) {
-        System.out.printf("writeTextOrNumber %d:%d, '%s', %s%n",
-                resultCell.getColumnIndex(), resultCell.getRowIndex(), buf, decide);
         if (decide
                 && !"@".equals(resultCell.getCellStyle().getDataFormatString())) {
             Matcher numberMatcher = NUMBER.matcher(buf.trim());
@@ -555,7 +546,6 @@ abstract class POIReportWriter extends ReportWriter {
 
     @Override
     public void flush() throws XylophoneError {
-        System.out.println("flush");
         if (needEval) {
             evaluate();
         }

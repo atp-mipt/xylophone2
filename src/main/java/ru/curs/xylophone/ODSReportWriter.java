@@ -90,7 +90,6 @@ final class ODSReportWriter extends ReportWriter {
     void newSheet(String sheetName, String sourceSheet,
                   int startRepeatingColumn, int endRepeatingColumn,
                   int startRepeatingRow, int endRepeatingRow) throws XylophoneError {
-        System.out.printf("new sheet  %s<-%s%n", sheetName, sourceSheet);
         updateActiveTemplateSheet(sourceSheet);
 
         activeResultSheet = result.getSheet(sourceSheet);
@@ -118,28 +117,16 @@ final class ODSReportWriter extends ReportWriter {
     }
 
     private void updateActiveTemplateSheet(String sourceSheet) throws XylophoneError {
-        System.out.printf("updateActiveTemplateSheet %s%n", sourceSheet);
         if (sourceSheet != null) {
             activeTemplateSheet = template.getSheet(sourceSheet);
         }
         if (activeTemplateSheet == null) {
             activeTemplateSheet = template.getSheet(0);
-            System.out.println("not found, fall back to sheet 0");
         }
         if (activeTemplateSheet == null) {
             throw new XylophoneError(String.format(
                     "Sheet '%s' does not exist.", sourceSheet));
         }
-    }
-
-    private int getLastRowNum(Sheet activeSheet) {
-        int k = 0;
-        while (activeSheet.getRange(k, 1).getValue() != null) {
-            if (++k >= activeSheet.getMaxRows()) {
-                return  activeSheet.getMaxRows();
-            }
-        }
-        return k;
     }
 
     private int getLastCellNum(Sheet activeSheet, int rowNum) {
@@ -156,7 +143,6 @@ final class ODSReportWriter extends ReportWriter {
     void putSection(XMLContext context, CellAddress growthPoint,
                     String sourceSheet, RangeAddress range) throws XylophoneError {
 
-        System.out.printf("put section %s, %s, %s%n", growthPoint.getAddress(), sourceSheet, range.getAddress());
         updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
             newSheet("Sheet1", sourceSheet, -1, -1, -1, -1);
@@ -167,7 +153,6 @@ final class ODSReportWriter extends ReportWriter {
 //        сделать просто проверку в цикле на выход за пределы страницы
 //        int rowFinish = Math.max(range.bottom(), getLastRowNum(activeResultSheet));
         int rowFinish = range.bottom();
-        System.out.println("first " + range.bottom() + " : " + getLastRowNum(activeResultSheet));
         for (int i = rowStart; i <= rowFinish; i++) {
             final int numColumns = getLastCellNum(activeTemplateSheet, i - 1);
             if (i > activeTemplateSheet.getMaxRows()) {
@@ -189,7 +174,6 @@ final class ODSReportWriter extends ReportWriter {
 
             int colStart = range.left();
             int colFinish = Math.min(range.right(), numColumns);
-            System.out.println(range.right() + ":" + numColumns);
             for (int j = colStart; j <= colFinish; j++) {
                 Range sourceCell = sourceRow.getCell(0, j - 1);
                 if (sourceCell.getValue() == null) {
@@ -220,7 +204,6 @@ final class ODSReportWriter extends ReportWriter {
                     DynamicCellWithStyle<Range> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
                     // Если ячейка содержит строковое представление числа и при
                     // этом содержит плейсхолдер --- меняем его на число.
-                    System.out.print(cellWithStyle.isStylesPresent() + "\n");
                     if (!cellWithStyle.isStylesPresent()) {
                         writeTextOrNumber(resultCell, buf,
                                 context.containsPlaceholder(val));
@@ -341,8 +324,6 @@ final class ODSReportWriter extends ReportWriter {
     }
 
     private void writeTextOrNumber(Range resultCell, String buf, boolean decide) {
-        System.out.printf("writeTextOrNumber %d:%d, '%s', %s%n", resultCell.getColumn(),
-                resultCell.getRow(), buf, decide);
 
         final Pattern NUMBER = Pattern
                 .compile("[+-]?\\d+(\\.\\d+)?([eE][+-]?\\d+)?");
@@ -377,7 +358,6 @@ final class ODSReportWriter extends ReportWriter {
 
     @Override
     public void flush() {
-        System.out.println("flush");
         try {
             this.result.save(getOutput());
         } catch (IOException e) {
