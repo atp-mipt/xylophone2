@@ -1,5 +1,6 @@
 package ru.curs.xylophone;
 
+import com.github.miachm.sods.SpreadSheet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -36,12 +37,27 @@ public class FullApprovalsTester {
      * 		             StyledCell.equals = org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals
      *
      */
-    public Function2<File, File, VerifyResult> compareSpreadsheetFiles = (actualFile, expectedFile) -> {
+    public Function2<File, File, VerifyResult> compareSpreadsheetPOIFiles = (actualFile, expectedFile) -> {
         try {
             Workbook actual = new XSSFWorkbook(actualFile);
             Workbook expected = new XSSFWorkbook(expectedFile);
             return VerifyResult.from(sameWorkbook(expected).matches(actual));
         } catch (InvalidFormatException | IOException e) {
+            e.printStackTrace();
+            return VerifyResult.FAILURE;
+        }
+    };
+
+    /**
+     * Функция, сравнивающая файлы с содержимым-таблицами для ODS.
+     * Внутри вызывает equals для SpreadSheet
+     */
+    public Function2<File, File, VerifyResult> compareSpreadsheetODSFiles = (actualFile, expectedFile) -> {
+        try {
+            SpreadSheet actual = new SpreadSheet(actualFile);
+            SpreadSheet expected = new SpreadSheet(expectedFile);
+            return VerifyResult.from(actual.equals(expected));
+        } catch (IOException e) {
             e.printStackTrace();
             return VerifyResult.FAILURE;
         }
@@ -66,7 +82,7 @@ public class FullApprovalsTester {
                         new ApprovalBinaryFileWriter(new ByteArrayInputStream(writtenData),
                                 outputType.getExtension()),
                         options.forFile().getNamer(),
-                        compareSpreadsheetFiles
+                        (outputType == OutputType.ODS) ? compareSpreadsheetODSFiles : compareSpreadsheetPOIFiles
                 ),
                 options
         );
