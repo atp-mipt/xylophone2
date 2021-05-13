@@ -6,7 +6,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
