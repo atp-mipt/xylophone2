@@ -40,7 +40,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.13.2</junit.version>
-        <mockito.version>3.9.0</mockito.version>
+        <mockito.version>3.10.0</mockito.version>
         <poi.version>5.0.0</poi.version>
         <xmlgraphics.version>2.1</xmlgraphics.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
@@ -126,6 +126,13 @@
             <groupId>org.apache.odftoolkit</groupId>
             <artifactId>simple-odf</artifactId>
             <version>0.8.2-incubating</version>
+        </dependency>
+
+        <!--ODS Writer-->
+        <dependency>
+            <groupId>com.github.miachm.sods</groupId>
+            <artifactId>SODS</artifactId>
+            <version>1.3.0</version>
         </dependency>
 
         <!--For Test-->

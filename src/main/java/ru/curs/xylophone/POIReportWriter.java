@@ -182,8 +182,8 @@ abstract class POIReportWriter extends ReportWriter {
             int startRepeatingColumn, int endRepeatingColumn,
             int startRepeatingRow, int endRepeatingRow)
             throws XylophoneError {
-
         updateActiveTemplateSheet(sourceSheet);
+
         activeResultSheet = result.getSheet(sheetName);
         if (activeResultSheet != null) {
             return;
@@ -275,6 +275,7 @@ abstract class POIReportWriter extends ReportWriter {
     @Override
     void putSection(XMLContext context, CellAddress growthPoint,
             String sourceSheet, RangeAddress range) throws XylophoneError {
+
         updateActiveTemplateSheet(sourceSheet);
         if (activeResultSheet == null) {
             sheet("Sheet1", sourceSheet, -1, -1, -1, -1);
@@ -331,7 +332,7 @@ abstract class POIReportWriter extends ReportWriter {
                     // ДЛЯ СТРОКОВЫХ ЯЧЕЕК ВЫЧИСЛЯЕМ ПОДСТАНОВКИ!!
                     val = sourceCell.getStringCellValue();
                     buf = context.calc(val);
-                    DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
+                    DynamicCellWithStyle<Cell> cellWithStyle = DynamicCellWithStyle.defineCellStyle(sourceCell, buf);
                     // Если ячейка содержит строковое представление числа и при
                     // этом содержит плейсхолдер --- меняем его на число.
                     if (!cellWithStyle.isStylesPresent()) {
