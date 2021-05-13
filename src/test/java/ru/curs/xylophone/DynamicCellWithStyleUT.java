@@ -5,8 +5,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DynamicCellWithStyleUT {
 
@@ -14,7 +13,7 @@ public class DynamicCellWithStyleUT {
     public void test01() {
         String testData = "Some Text {@foo} |backgroundcolor:\"#ffffff\";";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -23,15 +22,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("Some Text {@foo} "));
+        assertEquals(expected, actual);
+        assertEquals("Some Text {@foo} ", cellStyle.getValue());
     }
 
     @Test
     public void test02() {
         String testData = "Some Text ~{@fBar} bar|color:\"#353833\"";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -40,15 +39,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("Some Text ~{@fBar} bar"));
+        assertEquals(actual, expected);
+        assertEquals("Some Text ~{@fBar} bar", cellStyle.getValue());
     }
 
     @Test
     public void test03() {
         String testData = "|    fontfamily:\"'DejaVu Sans', Arial, Helvetica, sans-serif\";";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -57,15 +56,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals(""));
+        assertEquals(expected, actual);
+        assertEquals("", cellStyle.getValue());
     }
 
     @Test
     public void test04() {
         String testData = "foo text|    fontsize:\"14px\";";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -74,15 +73,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("foo text"));
+        assertEquals(expected, actual);
+        assertEquals("foo text", cellStyle.getValue());
     }
 
     @Test
     public void test05() {
         String testData = "|    margin:\"0\"";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -91,8 +90,8 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals(""));
+        assertEquals(expected, actual);
+        assertEquals("", cellStyle.getValue());
     }
 
     @Test
@@ -103,7 +102,7 @@ public class DynamicCellWithStyleUT {
                 "fontsize:\"14px\";" +
                 "    margin:\"0\"";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -116,15 +115,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("Some Text {@foo} "));
+        assertEquals(expected, actual);
+        assertEquals("Some Text {@foo} ", cellStyle.getValue());
     }
 
     @Test
     public void test07() {
         String testData = "sss asss |color: \"#AABBCC\"; value: \"a&nbsp;b\"; quotedvalue: \"aa\"\"bb\"\"\"";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -135,15 +134,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("sss asss "));
+        assertEquals(expected, actual);
+        assertEquals("sss asss ", cellStyle.getValue());
     }
 
     @Test
     public void test08() {
         String testData = "aaa | aa; bb";
 
-        DynamicCellWithStyle cellWithStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellWithStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertFalse(cellWithStyle.isStylesPresent());
 
@@ -155,7 +154,7 @@ public class DynamicCellWithStyleUT {
         String testData = "aaa abbb |  " +
                 "color: \"#AABBCC\"; value: \"a&nbsp;b\"; quotedvalue: \"aa\"\"bb\"\"\"; background-color: \"blue\"";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -167,15 +166,15 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("aaa abbb "));
+        assertEquals(expected, actual);
+        assertEquals("aaa abbb ", cellStyle.getValue());
     }
 
     @Test
     public void test10() {
         String testData = "aaa | bbb  |key: \"value | \"";
 
-        DynamicCellWithStyle cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
+        DynamicCellWithStyle<?> cellStyle = DynamicCellWithStyle.defineCellStyle(null, testData);
 
         assertTrue(cellStyle.isStylesPresent());
 
@@ -184,7 +183,7 @@ public class DynamicCellWithStyleUT {
 
         Map<String, String> actual = cellStyle.getProperties();
 
-        assertTrue(actual.equals(expected));
-        assertTrue(cellStyle.getValue().equals("aaa | bbb  "));
+        assertEquals(expected, actual);
+        assertEquals("aaa | bbb  ", cellStyle.getValue());
     }
 }
