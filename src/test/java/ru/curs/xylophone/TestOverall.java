@@ -10,13 +10,13 @@ public class TestOverall extends FullApprovalsTester {
 
 	@Test
 	public void test1() throws XylophoneError {
-		approvalTest("testdescriptor3.json", "testdata.xml", "template.xlsx",
+		approvalTest("descriptor_testdata/overall/testdescriptor3.yaml", "testdata.xml", "template.xlsx",
 				OutputType.XLSX, false);
 	}
 
 	@Test
 	public void test2() throws XylophoneError {
-		approvalTest("testsaxdescriptor3.json", "testdata.xml", "template.xlsx",
+		approvalTest("descriptor_testdata/overall/testsaxdescriptor3.yaml", "testdata.xml", "template.xlsx",
 				OutputType.XLSX, true);
 	}
 

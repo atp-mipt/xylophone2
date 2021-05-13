@@ -14,7 +14,7 @@ public class MergeTest {
 
     @Test
     public void mergeUpTest() throws URISyntaxException, IOException, XylophoneError {
-        File descriptorF = Paths.get(TestOverall.class.getResource("testdescriptor.json").toURI()).toFile();
+        File descriptorF = Paths.get(TestOverall.class.getResource("descriptor_testdata/testdescriptor.yaml").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("test_data_with_spec_symbols.xml");
@@ -30,7 +30,7 @@ public class MergeTest {
 
     @Test
     public void mergeLeftTest() throws URISyntaxException, IOException, XylophoneError {
-        File descriptorF = Paths.get(TestOverall.class.getResource("testdescriptor.json").toURI()).toFile();
+        File descriptorF = Paths.get(TestOverall.class.getResource("descriptor_testdata/testdescriptor.yaml").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("test_data_with_spec_symbols.xml");
@@ -46,7 +46,7 @@ public class MergeTest {
 
     @Test
     public void mergeTest() throws URISyntaxException, IOException, XylophoneError {
-        File descriptorF = Paths.get(TestOverall.class.getResource("testdescriptor.json").toURI()).toFile();
+        File descriptorF = Paths.get(TestOverall.class.getResource("descriptor_testdata/testdescriptor.yaml").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("test_data_with_spec_symbols.xml");
@@ -62,7 +62,7 @@ public class MergeTest {
 
     @Test
     public void mergeComplexTest() throws URISyntaxException, IOException, XylophoneError {
-        File descriptorF = Paths.get(TestOverall.class.getResource("merge_descriptor.json").toURI()).toFile();
+        File descriptorF = Paths.get(TestOverall.class.getResource("descriptor_testdata/merge/merge_descriptor.yaml").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("merge_data.xml");
@@ -78,7 +78,7 @@ public class MergeTest {
 
     @Test
     public void mergeComplexTestWithLeftUp() throws URISyntaxException, IOException, XylophoneError {
-        File descriptorF = Paths.get(TestOverall.class.getResource("merge_descriptor.json").toURI()).toFile();
+        File descriptorF = Paths.get(TestOverall.class.getResource("descriptor_testdata/merge/merge_descriptor.yaml").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("merge_data.xml");
@@ -96,7 +96,7 @@ public class MergeTest {
     @Test
     public void mergeComplexTestWithUpLeft() throws URISyntaxException, IOException, XylophoneError {
 
-        File descriptorF = Paths.get(TestOverall.class.getResource("merge_descriptor_up_left.json").toURI()).toFile();
+        File descriptorF = Paths.get(TestOverall.class.getResource("descriptor_testdata/merge/merge_descriptor_up_left.yaml").toURI()).toFile();
         FileInputStream descriptor = new FileInputStream(descriptorF);
         InputStream dataStream = TestReader.class
                 .getResourceAsStream("merge_data_up_left.xml");

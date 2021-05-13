@@ -6,7 +6,8 @@ public class TestWriterODS extends FullApprovalsTester {
 
     @Test
     public void WriterODS() throws XylophoneError {
-        approvalTest("testsaxdescriptor3.json", "testdata.xml", "template.ods",
+        approvalTest("descriptor_testdata/overall/testsaxdescriptor3.yaml",
+                "testdata.xml", "template.ods",
                 OutputType.ODS, false);
     }
 

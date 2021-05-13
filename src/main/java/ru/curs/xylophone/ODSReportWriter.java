@@ -249,7 +249,7 @@ final class ODSReportWriter extends ReportWriter {
 
     }
 
-    private void mergeUp(String attribute, Range resultCell, DynamicCellWithStyle cellWithStyle) {
+    private void mergeUp(String attribute, Range resultCell, DynamicCellWithStyle<?> cellWithStyle) {
         if (!CellPropertyType.MERGE_UP.contains(attribute.toLowerCase())) {
             String propertyValues = Arrays.stream(CellPropertyType.MERGE_UP.getValues())
                     .collect(Collectors.joining(", "));
@@ -279,7 +279,7 @@ final class ODSReportWriter extends ReportWriter {
         }
     }
 
-    private void mergeLeft(String attribute, Range resultCell, DynamicCellWithStyle cellWithStyle) {
+    private void mergeLeft(String attribute, Range resultCell, DynamicCellWithStyle<?> cellWithStyle) {
         if (!CellPropertyType.MERGE_LEFT.contains(attribute.toLowerCase())) {
             String propertyValues = Arrays.stream(CellPropertyType.MERGE_LEFT.getValues())
                     .collect(Collectors.joining(", "));
@@ -308,7 +308,7 @@ final class ODSReportWriter extends ReportWriter {
         }
     }
 
-    private boolean ifEquals(CellRangeAddress rangeAddress, DynamicCellWithStyle cellWithStyle) {
+    private boolean ifEquals(CellRangeAddress rangeAddress, DynamicCellWithStyle<?> cellWithStyle) {
         try {
             CellRangeAddress mergedRegion =
                     mergeRegionContainer.findIntersectedRange(rangeAddress);
