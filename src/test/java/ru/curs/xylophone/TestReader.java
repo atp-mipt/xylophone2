@@ -1,5 +1,7 @@
 package ru.curs.xylophone;
 
+import java.util.stream.Stream;
+
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.approvaltests.Approvals;
 import org.junit.After;
@@ -204,7 +206,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XylophoneError.class);
-		expectedException.expectMessage("Error while processing json descriptor: " +
+		expectedException.expectMessage("Error while processing descriptor: " +
 				"Unrecognized field \"element\" (class ru.curs.xylophone.descriptor.DescriptorElement), not marked as ignorable (2 known properties: \"name\", \"output-steps\"])");
 
 		DummyWriter w = new DummyWriter();
@@ -220,8 +222,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XylophoneError.class);
-    expectedException.expectMessage("Error while processing json descriptor: " +
-                "Cannot deserialize instance of `ru.curs.xylophone.descriptor.DescriptorIteration` out of START_ARRAY token");
+    expectedException.expectMessage("Error while processing descriptor");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
@@ -236,8 +237,7 @@ public class TestReader {
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
   	expectedException.expect(XylophoneError.class);
-    expectedException.expectMessage("Error while processing json descriptor: " +
-                "Cannot deserialize instance of `ru.curs.xylophone.descriptor.DescriptorIteration` out of START_ARRAY token");
+    expectedException.expectMessage("Error while processing descriptor");
 
 		DummyWriter w = new DummyWriter();
 		// When reader is created, exception is thrown because of not correct sequence of tags
@@ -273,7 +273,7 @@ class DummyWriter extends ReportWriter {
 	public void sheet(String sheetName, String sourceSheet,
 					  int startRepeatingColumn, int endRepeatingColumn,
 					  int startRepeatingRow, int endRepeatingRow) {
-		startLogSection("Creating sheet " + sheetName);
+		writeLine("Creating sheet " + sheetName);
 		assertEquals(sheetNames[sheetNo], sheetName);
 		sheetNo++;
 
@@ -286,14 +286,14 @@ class DummyWriter extends ReportWriter {
 	@Override
 	public void startSequence(boolean horizontal) {
 		if (horizontal)
-			startLogSection("Starting horizontal sequence");
+			startLogSection("{ horizontal sequence");
 		else
-			startLogSection("Starting vertical sequence");
+			startLogSection("{ vertical sequence");
 	}
 
 	@Override
 	public void endSequence(int merge, String regionName) {
-		endLogSection("Finalizing sequence");
+		endLogSection("} sequence");
 	}
 
 	@Override

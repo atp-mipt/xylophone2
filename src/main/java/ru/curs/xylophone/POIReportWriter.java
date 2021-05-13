@@ -119,7 +119,7 @@ abstract class POIReportWriter extends ReportWriter {
             fResult.setTypeOffset(fSource.getTypeOffset());
             fResult.setUnderline(fSource.getUnderline());
             fResult.setBold(fSource.getBold());
-            fontMap.put(fSource.getIndex(), fResult);
+            fontMap.put((short) fSource.getIndex(), fResult);
         }
 
         DataFormat df = result.createDataFormat();
@@ -130,16 +130,16 @@ abstract class POIReportWriter extends ReportWriter {
             CellStyle csSource = this.template.getCellStyleAt(i);
             CellStyle csResult = result.createCellStyle();
 
-            csResult.setAlignment(csSource.getAlignmentEnum());
-            csResult.setBorderBottom(csSource.getBorderBottomEnum());
-            csResult.setBorderLeft(csSource.getBorderLeftEnum());
-            csResult.setBorderRight(csSource.getBorderRightEnum());
-            csResult.setBorderTop(csSource.getBorderTopEnum());
+            csResult.setAlignment(csSource.getAlignment());
+            csResult.setBorderBottom(csSource.getBorderBottom());
+            csResult.setBorderLeft(csSource.getBorderLeft());
+            csResult.setBorderRight(csSource.getBorderRight());
+            csResult.setBorderTop(csSource.getBorderTop());
             csResult.setBottomBorderColor(csSource.getBottomBorderColor());
             csResult.setDataFormat(df.getFormat(csSource.getDataFormatString()));
             csResult.setFillBackgroundColor(csSource.getFillBackgroundColor());
             csResult.setFillForegroundColor(csSource.getFillForegroundColor());
-            csResult.setFillPattern(csSource.getFillPatternEnum());
+            csResult.setFillPattern(csSource.getFillPattern());
             Font f = fontMap.get(csSource.getFontIndex());
             if (f != null) {
                 csResult.setFont(f);
@@ -152,7 +152,7 @@ abstract class POIReportWriter extends ReportWriter {
             csResult.setRightBorderColor(csSource.getRightBorderColor());
             csResult.setRotation(csSource.getRotation());
             csResult.setTopBorderColor(csSource.getTopBorderColor());
-            csResult.setVerticalAlignment(csSource.getVerticalAlignmentEnum());
+            csResult.setVerticalAlignment(csSource.getVerticalAlignment());
             csResult.setWrapText(csSource.getWrapText());
 
             stylesMap.put(csSource, csResult);
@@ -321,7 +321,7 @@ abstract class POIReportWriter extends ReportWriter {
                 // Копируем значение...
                 String val;
                 String buf;
-                switch (sourceCell.getCellTypeEnum()) {
+                switch (sourceCell.getCellType()) {
                 case BOOLEAN:
                     resultCell.setCellValue(sourceCell.getBooleanCellValue());
                     break;
@@ -454,7 +454,7 @@ abstract class POIReportWriter extends ReportWriter {
 
             Cell cell =  activeResultSheet.getRow(mergedRegion.getFirstRow())
                     .getCell(mergedRegion.getFirstColumn());
-            switch (cell.getCellTypeEnum()) {
+            switch (cell.getCellType()) {
                 case STRING:
                     return cell.getStringCellValue().equalsIgnoreCase(cellWithStyle.getValue());
                 case BOOLEAN:

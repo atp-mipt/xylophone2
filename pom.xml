@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.curs</groupId>
@@ -39,20 +39,20 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
         <mockito.version>3.9.0</mockito.version>
-        <poi.version>3.17</poi.version>
+        <poi.version>5.0.0</poi.version>
         <xmlgraphics.version>2.1</xmlgraphics.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.appassembler.plugin.version>2.1.0</maven.appassembler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
         <spotbugs.maven.plugin.version>4.2.3</spotbugs.maven.plugin.version>
-        <checkstyle.version>8.41.1</checkstyle.version>
+        <checkstyle.version>8.42</checkstyle.version>
         <maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
-        <approval.version>9.5.0</approval.version>
+        <approval.version>11.2.3</approval.version>
     </properties>
 
     <distributionManagement>
@@ -66,7 +66,7 @@
         <repository>
             <id>bad.robot</id>
             <name>bad.robot repository on robotooling</name>
-            <url>http://www.robotooling.com/maven/</url>
+            <url>https://robotooling.com/maven/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.9.2</version>
+            <version>2.12.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -103,6 +103,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>2.12.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
             <version>2.12.3</version>
         </dependency>
         <dependency>
@@ -152,7 +157,7 @@
         <dependency>
             <groupId>bad.robot</groupId>
             <artifactId>simple-excel</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -386,7 +391,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <phase>verify</phase>
