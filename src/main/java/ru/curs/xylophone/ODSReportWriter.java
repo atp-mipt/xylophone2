@@ -169,8 +169,9 @@ final class ODSReportWriter extends ReportWriter {
             resultRow = activeResultSheet.getRange(
                     growthPoint.getRow() + i - rowStart - 1, 0, 1, numColumns);
 
-            // Копируем стиль ...
-            resultRow.setStyle(sourceRow.getStyle());
+            // Копируем высоты строк
+            activeResultSheet.setRowHeights(growthPoint.getRow() + i - rowStart - 1, 1,
+                    activeTemplateSheet.getRowHeight(i - 1));
 
             int colStart = range.left();
             int colFinish = Math.min(range.right(), numColumns);
@@ -183,7 +184,9 @@ final class ODSReportWriter extends ReportWriter {
                     activeResultSheet.appendColumns(j);
                     resultRow = activeResultSheet.getRange(
                             growthPoint.getRow() + i - rowStart - 1, 0, 1, numColumns + j);
-                    resultRow.setStyle(sourceRow.getStyle());
+
+                    activeResultSheet.setRowHeights(growthPoint.getRow() + i - rowStart - 1, 1,
+                            activeTemplateSheet.getRowHeight(i - 1));
                 }
                 Range resultCell = resultRow.getCell(0,
                         growthPoint.getCol() + j - colStart - 1);
