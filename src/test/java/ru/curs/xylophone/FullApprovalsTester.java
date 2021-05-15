@@ -9,7 +9,6 @@ import org.approvaltests.approvers.FileApprover;
 import org.approvaltests.core.Options;
 import org.approvaltests.core.VerifyResult;
 import org.approvaltests.writers.ApprovalBinaryFileWriter;
-import org.lambda.functions.Function2;
 
 import java.io.*;
 
@@ -37,7 +36,7 @@ public class FullApprovalsTester {
      * 		             StyledCell.equals = org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals
      *
      */
-    public Function2<File, File, VerifyResult> compareSpreadsheetPOIFiles = (actualFile, expectedFile) -> {
+    VerifyResult compareSpreadsheetPOIFiles(File actualFile, File expectedFile) {
         try {
             Workbook actual = new XSSFWorkbook(actualFile);
             Workbook expected = new XSSFWorkbook(expectedFile);
@@ -46,13 +45,13 @@ public class FullApprovalsTester {
             e.printStackTrace();
             return VerifyResult.FAILURE;
         }
-    };
+    }
 
     /**
      * Функция, сравнивающая файлы с содержимым-таблицами для ODS.
      * Внутри вызывает equals для SpreadSheet
      */
-    public Function2<File, File, VerifyResult> compareSpreadsheetODSFiles = (actualFile, expectedFile) -> {
+    VerifyResult compareSpreadsheetODSFiles(File actualFile, File expectedFile) {
         try {
             SpreadSheet actual = new SpreadSheet(actualFile);
             SpreadSheet expected = new SpreadSheet(expectedFile);
@@ -61,7 +60,7 @@ public class FullApprovalsTester {
             e.printStackTrace();
             return VerifyResult.FAILURE;
         }
-    };
+    }
 
     public void approvalTest(String descriptorPath, String dataPath, String templatePath,
                              OutputType outputType, boolean useSax)
@@ -82,7 +81,8 @@ public class FullApprovalsTester {
                         new ApprovalBinaryFileWriter(new ByteArrayInputStream(writtenData),
                                 outputType.getExtension()),
                         options.forFile().getNamer(),
-                        (outputType == OutputType.ODS) ? compareSpreadsheetODSFiles : compareSpreadsheetPOIFiles
+                        (outputType == OutputType.ODS) ? this::compareSpreadsheetODSFiles :
+                                this::compareSpreadsheetPOIFiles
                 ),
                 options
         );

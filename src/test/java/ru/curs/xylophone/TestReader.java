@@ -15,7 +15,6 @@ import ru.curs.xylophone.descriptor.DescriptorOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -74,7 +73,7 @@ public class TestReader {
 	@Test
 	public void testParseDescriptor() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor.json");
+				.getResourceAsStream("descriptor_testdata/testdescriptor.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		XMLDataReader reader = XMLDataReader.createReader(dataStream,
@@ -122,7 +121,7 @@ public class TestReader {
 	@Test
 	public void testDOMReader1() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor.json");
+				.getResourceAsStream("descriptor_testdata/testdescriptor.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
@@ -136,7 +135,7 @@ public class TestReader {
 	@Test
 	public void testDOMReader2() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor2.json");
+				.getResourceAsStream("descriptor_testdata/reader/testdescriptor2.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
@@ -150,7 +149,7 @@ public class TestReader {
 	@Test
 	public void testSAXReader1() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testdescriptor.json");
+				.getResourceAsStream("descriptor_testdata/testdescriptor.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
@@ -174,7 +173,7 @@ public class TestReader {
 	@Test
 	public void testSAXReader2() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testsaxdescriptor.json");
+				.getResourceAsStream("descriptor_testdata/reader/testsaxdescriptor.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
@@ -188,7 +187,7 @@ public class TestReader {
 	@Test
 	public void testSAXReader3() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("testsaxdescriptor2.json");
+				.getResourceAsStream("descriptor_testdata/reader/testsaxdescriptor2.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		DummyWriter w = new DummyWriter();
@@ -202,7 +201,7 @@ public class TestReader {
 	@Test
 	public void testParsingDescriptorWithElementInsideElementShouldFail() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("test_descriptor_with_element_inside_element.json");
+				.getResourceAsStream("descriptor_testdata/reader/test_descriptor_with_element_inside_element.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XylophoneError.class);
@@ -218,7 +217,7 @@ public class TestReader {
 	@Test
 	public void testParsingDescriptorWithIterationInsideIterationShouldFail() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("test_descriptor_with_iteration_inside_iteration.json");
+				.getResourceAsStream("descriptor_testdata/reader/test_descriptor_with_iteration_inside_iteration.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
 		expectedException.expect(XylophoneError.class);
@@ -233,7 +232,7 @@ public class TestReader {
 	@Test
 	public void testParsingDescriptorWithOutputInsideIterationShouldFail() throws XylophoneError {
 		descrStream = TestReader.class
-				.getResourceAsStream("test_descriptor_with_output_inside_iteration.json");
+				.getResourceAsStream("descriptor_testdata/reader/test_descriptor_with_output_inside_iteration.yaml");
 		dataStream = TestReader.class.getResourceAsStream("testdata.xml");
 
   	expectedException.expect(XylophoneError.class);

@@ -40,9 +40,9 @@ public final class DynamicCellWithStyle<T> {
         if (matcher.find()) {
             String value = record.substring(0, matcher.start());
             Map<String, String> properties = parseProperties(matcher.group(1));
-            return new DynamicCellWithStyle<T>(cell, properties, value);
+            return new DynamicCellWithStyle<>(cell, properties, value);
         } else {
-            return new DynamicCellWithStyle<T>(cell, Collections.emptyMap(), record);
+            return new DynamicCellWithStyle<>(cell, Collections.emptyMap(), record);
         }
     }
 

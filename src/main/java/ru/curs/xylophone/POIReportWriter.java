@@ -41,7 +41,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -388,10 +387,9 @@ abstract class POIReportWriter extends ReportWriter {
         arrangeMergedCells(growthPoint, range);
     }
 
-    private void mergeUp(String attribute, Cell resultCell, DynamicCellWithStyle cellWithStyle) {
+    private void mergeUp(String attribute, Cell resultCell, DynamicCellWithStyle<?> cellWithStyle) {
         if (!CellPropertyType.MERGE_UP.contains(attribute.toLowerCase())) {
-            String propertyValues = Arrays.stream(CellPropertyType.MERGE_UP.getValues())
-                    .collect(Collectors.joining(", "));
+            String propertyValues = String.join(", ", CellPropertyType.MERGE_UP.getValues());
             throw new IllegalArgumentException(
                     String.format("There are no such value: %s. Please choice one of %s",
                             attribute, propertyValues));
@@ -418,10 +416,9 @@ abstract class POIReportWriter extends ReportWriter {
         }
     }
 
-    private void mergeLeft(String attribute, Cell resultCell, DynamicCellWithStyle cellWithStyle) {
+    private void mergeLeft(String attribute, Cell resultCell, DynamicCellWithStyle<?> cellWithStyle) {
         if (!CellPropertyType.MERGE_LEFT.contains(attribute.toLowerCase())) {
-            String propertyValues = Arrays.stream(CellPropertyType.MERGE_LEFT.getValues())
-                    .collect(Collectors.joining(", "));
+            String propertyValues = String.join(", ", CellPropertyType.MERGE_LEFT.getValues());
             throw new RuntimeException(
                     String.format("There are no such value: %s. Please choice one of %s",
                             attribute, propertyValues));
@@ -447,7 +444,7 @@ abstract class POIReportWriter extends ReportWriter {
         }
     }
 
-    private boolean ifEquals(CellRangeAddress rangeAddress, DynamicCellWithStyle cellWithStyle) {
+    private boolean ifEquals(CellRangeAddress rangeAddress, DynamicCellWithStyle<?> cellWithStyle) {
         try {
             CellRangeAddress mergedRegion =
                     mergeRegionContainer.findIntersectedRange(rangeAddress);
